@@ -3,16 +3,16 @@
     "id": "dock-guild",
     "name": "부두 조합",
     "stance": "어부와 상인의 생계와 이익을 지킨다",
-    "note": "",
+    "note": "자릿세 유예의 대가로 맡은 부두 보수 부역을 소금밭 품팔이들에게 헐값에 넘기고 있다. 대치가 끝나 조합 안은 오랜만에 조용하다",
     "members": ["yeron-the-fisher"],
-    "tension": 25
+    "tension": 15
   },
   {
     "id": "temple",
     "name": "신전",
     "stance": "기록과 신탁의 권위를 지킨다",
-    "note": "",
+    "note": "갯벌 침수 신탁이 글자 그대로 실현되어 언덕에서의 권위가 올랐다. 갯벌에서는 '알고도 내려오지 않았다'는 원망을 사고 있다",
     "members": ["isen-the-scribe"],
-    "tension": 20
+    "tension": 30
   }
 ]

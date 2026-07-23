@@ -40,7 +40,7 @@
       "hidden": "화재 때 실종된 동생이 살아있다고 믿고 찾고 싶다"
     },
     "secret": "동생의 유품에서 발견한, 뜻을 알 수 없는 창고 열쇠를 갖고 있다",
-    "wish": { "text": "동생 생일에 그 애가 좋아하던 꿀빵을 함께 먹는 것", "status": "open", "note": "생일에 함께 먹지는 못했다. 대신 첫 빵 자리에서 조개껍데기 두 개를 발견했고, 응답이라 믿는다" },
+    "wish": { "text": "동생 생일에 그 애가 좋아하던 꿀빵을 함께 먹는 것", "status": "open", "note": "조개껍데기의 주인이 갯벌 아이임을 제 눈으로 보았지만, 믿음은 깨지는 대신 갯벌로 방향을 틀었다. 꿀빵은 계속 놓인다" },
     "quirks": [
       "첫 빵은 항상 팔지 않고 부두에 놓아둔다",
       "손님 이름을 절대 안 잊는다"
@@ -48,12 +48,14 @@
     "scars": [
       { "cycle": null, "event_id": "warehouse-fire", "mark": "동생이 실종되었다. 연기 냄새를 맡으면 하던 일을 멈춘다" },
       { "cycle": 1, "event_id": "bread-and-shell", "mark": "첫 빵 자리에서 조개껍데기를 발견했다. 동생의 신호일지 모른다는 생각에, 그날부터 빵 옆에 꿀빵을 하나 더 놓는다" },
-      { "cycle": 2, "event_id": "two-shells", "mark": "동생 생일에 발견한 조개껍데기 두 개를 실에 꿰어 목에 걸었다. 동생이 살아서 가까이 있다고 믿기 시작했다" }
+      { "cycle": 2, "event_id": "two-shells", "mark": "동생 생일에 발견한 조개껍데기 두 개를 실에 꿰어 목에 걸었다. 동생이 살아서 가까이 있다고 믿기 시작했다" },
+      { "cycle": 4, "event_id": "the-child-is-named", "mark": "첫 빵을 가져가는 손을 마침내 보았다. 동생이 아니라 타루라는 갯벌 아이였다. 그날 목의 조개껍데기를 풀지 않았다. 대신 갯벌 쪽 소식을 묻기 시작했다" }
     ],
     "relationships": {
-      "rohan-the-smith": { "type": "채무", "note": "화재 후 대장간 재건 자금을 빌려주었다", "tension": 40 }
+      "rohan-the-smith": { "type": "채무", "note": "화재 후 대장간 재건 자금을 빌려주었다", "tension": 40 },
+      "taru-of-the-saltfields": { "type": "비밀공유", "note": "첫 빵을 가져가던 갯벌 아이. 이름은 타루. 동생과 이어진 아이라고 믿는다. 아직 말을 걸지 못했다", "tension": 35 }
     },
-    "tension": 40
+    "tension": 45
   },
   {
     "id": "yeron-the-fisher",
@@ -76,13 +78,14 @@
       { "cycle": 1, "event_id": "dock-fee-standoff", "mark": "자릿세 싸움의 앞에 서게 되었다. 바다에 나가지 않을 이유가 생겨 안도했고, 그 안도가 부끄럽다. 손자의 항해 수업은 또 미뤄졌다" },
       { "cycle": 2, "event_id": "fee-truce-offer", "mark": "조합원들이 승리라 부르는 유예안이 그에게는 마감시한처럼 들린다. 답을 미루는 이유를 아무에게도 설명할 수 없다" },
       { "cycle": 3, "event_id": "truce-signed-without-yeron", "mark": "자리를 비운 사이 조합이 유예안에 서명했고, 그의 이름이 맨 위에 올라 있었다. 싸움이 끝났고, 바다에 나가지 않을 명분도 함께 끝났다" },
-      { "cycle": 3, "event_id": "first-knot-lesson", "mark": "부두에 묶인 배 위에서 손자에게 매듭부터 가르치기 시작했다. '뱃머리는 왜 두 번 두드려요'라는 물음에 답하지 못했다" }
+      { "cycle": 3, "event_id": "first-knot-lesson", "mark": "부두에 묶인 배 위에서 손자에게 매듭부터 가르치기 시작했다. '뱃머리는 왜 두 번 두드려요'라는 물음에 답하지 못했다" },
+      { "cycle": 4, "event_id": "three-nights-of-rain", "mark": "실종의 밤과 같은 전조를 읽었고, 이번에는 말했다. 배들이 뭍에 오르는 것을 보며 그 밤 이후 처음으로 깊이 잤다. 그러나 등 뒤에서 '그 눈이 그 밤엔 어디 있었나'라는 물음이 자라는 것을 안다" }
     ],
     "relationships": {
       "kalla-the-market-warden": { "type": "갈등", "note": "대치는 그가 없는 자리에서 끝났다. 관리인과 다툴 일은 줄었으나, 서명 목록 맨 위의 제 이름을 볼 때마다 속이 얹힌다", "tension": 20 },
       "rohan-the-smith": { "type": "비밀공유", "note": "고지 철판 귀퉁이의 잎 문양이 누구의 것인지 안다. 말하지 않기로 했다. 신전 서기가 문양을 베껴 갔다는 말이 마음에 걸린다", "tension": 15 }
     },
-    "tension": 60
+    "tension": 55
   },
   {
     "id": "isen-the-scribe",
@@ -101,12 +104,13 @@
       "촛불을 끄기 전 그날 쓴 글을 소리 내어 읽는다"
     ],
     "scars": [
-      { "cycle": 3, "event_id": "scribe-at-the-plate", "mark": "잎 문양을 베껴 그리다 대장간 마당의 사과나무를 보았다. 공식 기록에는 적지 않았다. 왼손의 기록이 처음으로 공식 기록과 다른 내용을 담게 되었다" }
+      { "cycle": 3, "event_id": "scribe-at-the-plate", "mark": "잎 문양을 베껴 그리다 대장간 마당의 사과나무를 보았다. 공식 기록에는 적지 않았다. 왼손의 기록이 처음으로 공식 기록과 다른 내용을 담게 되었다" },
+      { "cycle": 4, "event_id": "three-nights-of-rain", "mark": "의심하며 옮겨 적은 신탁이 사흘 만에 글자 그대로 실현되었다. 소금밭이 잠긴 날 밤, 왼손의 기록에 처음으로 '맞았다는 것이 무섭다'고 적었다" }
     ],
     "relationships": {
       "rohan-the-smith": { "type": "갈등", "note": "화재 증언은 거절당했지만, 이제는 묻지 않고도 알게 되는 것이 생겼다. 잎 문양의 주인을 짐작하고 있다", "tension": 30 }
     },
-    "tension": 30
+    "tension": 35
   },
   {
     "id": "kalla-the-market-warden",
@@ -128,11 +132,36 @@
     "scars": [
       { "cycle": 1, "event_id": "dock-fee-standoff", "mark": "고지문 앞에서 조합원들과 언쟁하다 처음으로 갯벌 말씨가 튀어나왔다. 누가 들었는지 확신하지 못한다" },
       { "cycle": 2, "event_id": "fee-truce-offer", "mark": "처음으로 먼저 물러섰다. 유예안을 써 붙이던 날 밤, 장부를 처음부터 끝까지 두 번 다시 세어보았다" },
-      { "cycle": 3, "event_id": "truce-signed-without-yeron", "mark": "유예안이 받아들여진 날의 안도는 한나절을 가지 못했다. '걷은 자릿세는 어디에 쓰였나'라는 물음이 시장에 돌기 시작한 뒤로, 장부를 세는 손이 두 번에서 세 번으로 늘었다" }
+      { "cycle": 3, "event_id": "truce-signed-without-yeron", "mark": "유예안이 받아들여진 날의 안도는 한나절을 가지 못했다. '걷은 자릿세는 어디에 쓰였나'라는 물음이 시장에 돌기 시작한 뒤로, 장부를 세는 손이 두 번에서 세 번으로 늘었다" },
+      { "cycle": 4, "event_id": "saltfolk-on-the-dock", "mark": "부역 감독이 되어 매일 갯벌 사람들 앞에 선다. 언덕 말씨가 자꾸 미끄러진다. 자재값을 치러야 할 자릿세 궤가 장부만큼 차 있지 않음을 아는 사람은 아직 자신뿐이라, 주문을 미루고 있다" }
     ],
     "relationships": {
       "yeron-the-fisher": { "type": "갈등", "note": "조합은 답했지만 저 늙은이 본인의 답은 끝내 듣지 못했다. 대치가 끝났는데도 그 침묵이 마음에 걸린다", "tension": 25 }
     },
-    "tension": 55
+    "tension": 60
+  },
+  {
+    "id": "taru-of-the-saltfields",
+    "name": "타루",
+    "role": "소금밭 아이",
+    "district": "mudflat-district",
+    "status": "alive",
+    "desires": {
+      "surface": "잠긴 소금밭이 마르면 다시 일해서 식구 몫을 하는 것",
+      "hidden": "빵 굽는 냄새가 나는 항구 골목에서 살고 싶다"
+    },
+    "secret": "부두의 첫 빵을 매일 새벽 가져가는 것이 자신이며, 그 자리에 조개껍데기를 놓아 온 것도 자신이라는 것",
+    "wish": { "text": "조개껍데기 대신 언젠가 제값을 치르고 그 빵을 사 먹는 것", "status": "open" },
+    "quirks": [
+      "조개껍데기를 왼쪽 주머니에만 넣는다. 오른쪽 주머니는 구멍이 났다",
+      "빵을 반드시 반으로 갈라 절반은 다음 날 먹는다"
+    ],
+    "scars": [
+      { "cycle": 4, "event_id": "three-nights-of-rain", "mark": "소금밭이 잠기던 사흘 밤을 식구들과 세간을 옮기며 보냈다. 물이 덮은 소금밭의 냄새를 기억한다. 새벽 빵 심부름 같던 길이 이제 식구의 끼니가 되었다" }
+    ],
+    "relationships": {
+      "mira-the-baker": { "type": "은혜", "note": "매일 새벽 첫 빵을 가져간다. 빵 주인이 알면서 두는 것인지 늘 궁금하다. 조개껍데기는 값이 못 되는 걸 안다", "tension": 10 }
+    },
+    "tension": 30
   }
 ]
