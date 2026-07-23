@@ -43,7 +43,7 @@
 │   ├── factions.json
 │   └── timeline.json     # append-only 사건 로그 (truth)
 ├── chronicle/        # 공식 연대기. 역사가 에이전트 작성. 편향·오류 있을 수 있음.
-│   └── YYYY-cycleNNN.md
+│   └── cycle-NNN.md
 ├── records/          # 신문, 주민 편지·일기. 더 왜곡되고 단편적. (1단계부터)
 ├── engine/           # 프롬프트, 규칙서, 사이클 스크립트
 │   ├── rules.md          # 규칙서 (§6)
@@ -80,7 +80,7 @@
     "hidden": "이 도시를 떠나고 싶다"
   },
   "secret": "10년 전 화재의 목격자",
-  "wish": "죽은 아내의 고향 바다를 한 번 보는 것",
+  "wish": { "text": "죽은 아내의 고향 바다를 한 번 보는 것", "status": "open" },
   "quirks": [
     "비 오는 날마다 아내가 심은 사과나무 아래서 점심을 먹는다",
     "왼손잡이지만 사람들 앞에서는 오른손을 쓴다"
@@ -97,7 +97,8 @@
 - `relationships`: `type`은 표준 어휘(가족|채무|거래|우정|연정|원한|갈등|은혜|비밀공유)만,
   `note`는 자유 서술. 상세는 `engine/rules.md` 규칙 13.
 - `quirks`: 서사 기능이 없는 무용한 디테일 2~3개. 애착의 원료. **필수.**
-- `wish`: 추적 가능한 작은 소원 1개. 몇 달에 걸쳐 성취되거나 좌절됨. 이완의 리듬 담당.
+- `wish`: 추적 가능한 작은 소원. `{ text, status, note }` 구조, status는 open|fulfilled|lost.
+  이력은 비가역(삭제 금지), open은 인물당 1개. 몇 달에 걸쳐 성취되거나 좌절됨. 이완의 리듬 담당.
 - `scars`: 사건이 인물을 통과할 때마다 각인. 죽지 않아도 흔적이 남는다. `event_id`는 timeline 사건 id 참조.
   형식: `{ "cycle": 12, "event_id": "east-fire", "mark": "왼팔 화상, 불을 무서워하게 됨" }`
 - `tension`: 사건 생성의 분기 기준. 인물·구역·세력 모두 보유.
