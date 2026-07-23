@@ -260,7 +260,11 @@ async function main() {
     }
     for (const w of weeklyDueWeeks()) runWeekly(w);
     if (Date.now() >= next.getTime()) {
-      await fireEvent();
+      try {
+        await fireEvent();
+      } catch (e) {
+        log(`이벤트 처리 중 예외 — 폐기하고 계속: ${e.message}`);
+      }
       next = nextEventTime();
       log(`다음 이벤트 예정: ${next.toLocaleString('ko-KR', { hour12: false })}`);
     }
@@ -268,4 +272,6 @@ async function main() {
   }
 }
 
-main();
+process.on('uncaughtException', (e) => { console.error(`[runner] 치명적 예외: ${e.stack ?? e}`); process.exit(1); });
+process.on('unhandledRejection', (e) => { console.error(`[runner] 처리되지 않은 rejection: ${e}`); process.exit(1); });
+main().catch((e) => { console.error(`[runner] 메인 루프 종료: ${e.stack ?? e}`); process.exit(1); });
