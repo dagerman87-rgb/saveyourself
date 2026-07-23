@@ -16,12 +16,14 @@
       "왼손잡이지만 사람들 앞에서는 오른손을 쓴다"
     ],
     "scars": [
-      { "cycle": null, "event_id": "warehouse-fire", "mark": "그날 본 것을 누구에게도 말하지 못했다. 화재 종소리를 들으면 손이 떨린다" }
+      { "cycle": null, "event_id": "warehouse-fire", "mark": "그날 본 것을 누구에게도 말하지 못했다. 화재 종소리를 들으면 손이 떨린다" },
+      { "cycle": 1, "event_id": "notice-plate-forged", "mark": "빚 때문에 자릿세 고지 철판을 만들었다. 조합 사람들의 시선을 피해 가게 문을 반쯤만 열게 되었다" }
     ],
     "relationships": {
-      "mira-the-baker": { "type": "채무", "note": "빵집 재건 자금을 빌렸다", "tension": 40 }
+      "mira-the-baker": { "type": "채무", "note": "빵집 재건 자금을 빌렸다. 상환이 밀려 거절 못 할 일감이 늘고 있다", "tension": 40 },
+      "kalla-the-market-warden": { "type": "거래", "note": "자릿세 고지 철판을 주문받아 만들었다. 받은 일감이 부두에서의 평판을 갉아먹는다", "tension": 20 }
     },
-    "tension": 25
+    "tension": 30
   },
   {
     "id": "mira-the-baker",
@@ -40,12 +42,13 @@
       "손님 이름을 절대 안 잊는다"
     ],
     "scars": [
-      { "cycle": null, "event_id": "warehouse-fire", "mark": "동생이 실종되었다. 연기 냄새를 맡으면 하던 일을 멈춘다" }
+      { "cycle": null, "event_id": "warehouse-fire", "mark": "동생이 실종되었다. 연기 냄새를 맡으면 하던 일을 멈춘다" },
+      { "cycle": 1, "event_id": "bread-and-shell", "mark": "첫 빵 자리에서 조개껍데기를 발견했다. 동생의 신호일지 모른다는 생각에, 그날부터 빵 옆에 꿀빵을 하나 더 놓는다" }
     ],
     "relationships": {
       "rohan-the-smith": { "type": "채무", "note": "화재 후 대장간 재건 자금을 빌려주었다", "tension": 40 }
     },
-    "tension": 30
+    "tension": 35
   },
   {
     "id": "yeron-the-fisher",
@@ -64,12 +67,13 @@
       "배에 오르기 전 반드시 뱃머리를 두 번 두드린다"
     ],
     "scars": [
-      { "cycle": null, "event_id": "fishermen-lost", "mark": "폭풍 전조를 보고도 침묵했다. 그날 이후 밤바다를 보지 않는다" }
+      { "cycle": null, "event_id": "fishermen-lost", "mark": "폭풍 전조를 보고도 침묵했다. 그날 이후 밤바다를 보지 않는다" },
+      { "cycle": 1, "event_id": "dock-fee-standoff", "mark": "자릿세 싸움의 앞에 서게 되었다. 바다에 나가지 않을 이유가 생겨 안도했고, 그 안도가 부끄럽다. 손자의 항해 수업은 또 미뤄졌다" }
     ],
     "relationships": {
-      "kalla-the-market-warden": { "type": "갈등", "note": "부두 자릿세 인상을 둘러싼 다툼", "tension": 35 }
+      "kalla-the-market-warden": { "type": "갈등", "note": "자릿세 3할 인상 고지에 맞서 조합의 납부 거부를 이끌고 있다", "tension": 45 }
     },
-    "tension": 45
+    "tension": 50
   },
   {
     "id": "isen-the-scribe",
@@ -110,10 +114,12 @@
       "갯벌 사람 앞에서는 일부러 언덕 말씨를 쓴다",
       "동전을 셀 때 반드시 두 번 센다"
     ],
-    "scars": [],
+    "scars": [
+      { "cycle": 1, "event_id": "dock-fee-standoff", "mark": "고지문 앞에서 조합원들과 언쟁하다 처음으로 갯벌 말씨가 튀어나왔다. 누가 들었는지 확신하지 못한다" }
+    ],
     "relationships": {
-      "yeron-the-fisher": { "type": "갈등", "note": "부두 자릿세 인상을 둘러싼 다툼", "tension": 35 }
+      "yeron-the-fisher": { "type": "갈등", "note": "자릿세 인상에 맞서는 조합의 선봉. 대치가 길어지면 장부를 들여다보자는 말이 나올까 두렵다", "tension": 50 }
     },
-    "tension": 30
+    "tension": 40
   }
 ]
