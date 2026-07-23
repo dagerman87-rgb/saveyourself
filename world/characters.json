@@ -3,6 +3,7 @@
     "id": "rohan-the-smith",
     "name": "로한",
     "role": "대장장이",
+    "district": "port-district",
     "status": "alive",
     "desires": {
       "surface": "대장간을 아들에게 물려주는 것",
@@ -14,9 +15,11 @@
       "비 오는 날마다 아내가 심은 사과나무 아래서 점심을 먹는다",
       "왼손잡이지만 사람들 앞에서는 오른손을 쓴다"
     ],
-    "scars": [],
+    "scars": [
+      { "cycle": null, "event": "창고 대화재", "mark": "그날 본 것을 누구에게도 말하지 못했다. 화재 종소리를 들으면 손이 떨린다" }
+    ],
     "relationships": {
-      "mira-the-baker": { "type": "채무", "tension": 40 }
+      "mira-the-baker": { "type": "채무", "note": "빵집 재건 자금을 빌렸다", "tension": 40 }
     },
     "tension": 25
   },
@@ -24,6 +27,7 @@
     "id": "mira-the-baker",
     "name": "미라",
     "role": "빵집 주인",
+    "district": "port-district",
     "status": "alive",
     "desires": {
       "surface": "화재 이후 재건한 빵집을 지키는 것",
@@ -35,9 +39,11 @@
       "첫 빵은 항상 팔지 않고 부두에 놓아둔다",
       "손님 이름을 절대 안 잊는다"
     ],
-    "scars": [],
+    "scars": [
+      { "cycle": null, "event": "창고 대화재", "mark": "동생이 실종되었다. 연기 냄새를 맡으면 하던 일을 멈춘다" }
+    ],
     "relationships": {
-      "rohan-the-smith": { "type": "채권", "tension": 40 }
+      "rohan-the-smith": { "type": "채무", "note": "화재 후 대장간 일감을 몰아준 채권자", "tension": 40 }
     },
     "tension": 30
   },
@@ -45,6 +51,7 @@
     "id": "yeron-the-fisher",
     "name": "예론",
     "role": "늙은 어부",
+    "district": "port-district",
     "status": "alive",
     "desires": {
       "surface": "마지막 남은 배 한 척을 지키는 것",
@@ -56,9 +63,11 @@
       "부두 갈매기들에게 전부 이름을 붙여 부른다",
       "배에 오르기 전 반드시 뱃머리를 두 번 두드린다"
     ],
-    "scars": [],
+    "scars": [
+      { "cycle": null, "event": "어부 실종", "mark": "폭풍 전조를 보고도 침묵했다. 그날 이후 밤바다를 보지 않는다" }
+    ],
     "relationships": {
-      "kalla-the-market-warden": { "type": "시장 자릿세 갈등", "tension": 35 }
+      "kalla-the-market-warden": { "type": "갈등", "note": "부두 자릿세 인상을 둘러싼 다툼", "tension": 35 }
     },
     "tension": 45
   },
@@ -66,6 +75,7 @@
     "id": "isen-the-scribe",
     "name": "이센",
     "role": "신전 서기",
+    "district": "hill-district",
     "status": "alive",
     "desires": {
       "surface": "도시의 기록을 완전하게 보존하는 것",
@@ -79,7 +89,7 @@
     ],
     "scars": [],
     "relationships": {
-      "rohan-the-smith": { "type": "화재 증언 기록을 거절당한 사이", "tension": 20 }
+      "rohan-the-smith": { "type": "갈등", "note": "화재 증언 기록을 요청했다 거절당했다", "tension": 20 }
     },
     "tension": 20
   },
@@ -87,6 +97,8 @@
     "id": "kalla-the-market-warden",
     "name": "칼라",
     "role": "시장 관리인",
+    "district": "port-district",
+    "origin_district": "mudflat-district",
     "status": "alive",
     "desires": {
       "surface": "시장세를 성실히 걷어 인정받는 것",
@@ -100,7 +112,7 @@
     ],
     "scars": [],
     "relationships": {
-      "yeron-the-fisher": { "type": "시장 자릿세 갈등", "tension": 35 }
+      "yeron-the-fisher": { "type": "갈등", "note": "부두 자릿세 인상을 둘러싼 다툼", "tension": 35 }
     },
     "tension": 30
   }

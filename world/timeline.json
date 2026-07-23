@@ -10,11 +10,20 @@
   },
   {
     "id": "warehouse-fire",
-    "cycle": -3650,
+    "cycle": null,
     "date": "10년 전",
     "truth": "미기록",
     "public_knowledge": "원인 미상의 화재로 창고 구역 소실, 사상자 다수",
     "affected": ["port-district"],
+    "tension_delta": 0
+  },
+  {
+    "id": "fishermen-lost",
+    "cycle": null,
+    "date": "1개월 전",
+    "public_knowledge": "어부 3명이 밤 조업 중 실종되었다. 부서진 뱃조각만 떠올랐다. 부두에는 바다 괴물 소문이 돌기 시작했다.",
+    "truth": "돌풍에 의한 조난. 예론은 그날 저녁 폭풍의 전조를 읽었으나 아무에게도 알리지 않았다.",
+    "affected": ["yeron-the-fisher"],
     "tension_delta": 0
   }
 ]
