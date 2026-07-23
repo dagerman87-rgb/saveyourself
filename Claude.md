@@ -42,7 +42,8 @@
 │   ├── places.json
 │   ├── factions.json
 │   ├── timeline.json     # append-only 사건 로그 (truth)
-│   └── oracles.json      # 신탁 이력 (append-only)
+│   ├── oracles.json      # 신탁 이력 (append-only)
+│   └── axes.json         # 갈등 축 레지스트리 (엔진 유지)
 ├── chronicle/        # 공식 연대기. 역사가 에이전트 작성. 편향·오류 있을 수 있음.
 │   └── cycle-NNN.md
 ├── records/          # 신문, 주민 편지·일기. 더 왜곡되고 단편적. (1단계부터)
