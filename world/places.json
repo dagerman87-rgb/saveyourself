@@ -11,7 +11,7 @@
       "description": "부두, 시장, 대장간, 빵집이 모인 경제의 심장. 그러나 화재의 기억이 남은 곳.",
       "notable_places": ["부두", "시장", "대장간", "빵집"],
       "population": 9500,
-      "tension": 30
+      "tension": 25
     },
     {
       "id": "hill-district",
