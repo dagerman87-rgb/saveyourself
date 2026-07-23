@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미르한 — 어항</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="topbar">
+  <div class="brand">미르한 <span class="sub">어항</span></div>
+  <div class="clock-group">
+    <span id="village-date">기록력 —</span>
+    <span class="dot">·</span>
+    <span id="real-time">--:--:--</span>
+    <span class="dot">·</span>
+    <span id="weather">맑음</span>
+  </div>
+  <div id="next-event" class="next-event">러너 상태 확인 중…</div>
+</header>
+
+<main>
+  <section id="map-pane">
+    <svg id="map" viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="playback-banner" class="hidden"></div>
+  </section>
+
+  <aside id="side">
+    <section id="log-pane">
+      <h2>마을 로그</h2>
+      <div id="log-list"></div>
+    </section>
+
+    <section id="card-pane">
+      <div id="char-strip"></div>
+      <div id="char-card"><p class="placeholder">지도나 로그에서 인물을 클릭하면 카드가 열립니다.</p></div>
+    </section>
+
+    <section id="oracle-pane" class="collapsed">
+      <h2 id="oracle-toggle">신탁 <span class="chev">▸</span></h2>
+      <div id="oracle-body">
+        <div id="oracle-history"></div>
+        <textarea id="oracle-text" rows="2" placeholder="신탁의 말…"></textarea>
+        <label class="oracle-row"><input type="checkbox" id="oracle-proclaimed" checked> 공표한다 (주민이 알게 됨)</label>
+        <button id="oracle-send">신탁 내리기</button>
+        <div id="oracle-status"></div>
+      </div>
+    </section>
+  </aside>
+</main>
+
+<div id="modal-backdrop" class="hidden">
+  <div id="modal"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

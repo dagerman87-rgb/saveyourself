@@ -12,3 +12,6 @@ engine/.runner.lock
 engine/.runner-stats.jsonl
 engine/runner.out.log
 engine/runner.err.log
+engine/runner-state.json
+engine/viewer.out.log
+engine/viewer.err.log

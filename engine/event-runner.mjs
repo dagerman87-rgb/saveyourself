@@ -14,6 +14,7 @@ const STATE_FILES = ['characters.json', 'places.json', 'factions.json', 'axes.js
 const LOCK = path.join(ROOT, 'engine', '.runner.lock');
 const HALT = path.join(ROOT, 'engine', '.world-halt');
 const STATS = path.join(ROOT, 'engine', '.runner-stats.jsonl');
+const RUNNER_STATE = path.join(ROOT, 'engine', 'runner-state.json');
 
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const write = (rel, body) => fs.writeFileSync(path.join(ROOT, rel), body, 'utf8');
@@ -67,6 +68,17 @@ function budgetState() {
 function pendingOracles() {
   const { week } = villageDate();
   return readJson('world/oracles.json').filter((o) => o.cycle === null || o.cycle === week);
+}
+
+// ---------- 러너 상태 파일 (WO-011: 뷰어의 '다음 사건 예고'용) ----------
+function saveRunnerState(next, extra = {}) {
+  try {
+    fs.writeFileSync(RUNNER_STATE, JSON.stringify({
+      pid: process.pid, mode: TEST ? 'test' : 'normal',
+      next_event_at: next ? next.toISOString() : null,
+      updated_at: now().toISOString(), ...extra,
+    }, null, 2) + '\n', 'utf8');
+  } catch { /* 상태 파일은 부가 정보 — 실패해도 러너는 계속 */ }
 }
 
 // ---------- 스케줄링 ----------
@@ -252,6 +264,7 @@ async function main() {
   log(`이벤트 러너 기동 (${TEST ? '테스트 모드: 간격 5~10분' : '정상 모드: 간격 1~3시간, 야간 휴지'}) — ${villageDate().label}`);
   let next = TEST ? new Date(Date.now() + 5000) : nextEventTime();
   log(`다음 이벤트 예정: ${next.toLocaleString('ko-KR', { hour12: false })}`);
+  saveRunnerState(next);
   for (;;) {
     if (fs.existsSync(HALT)) {
       log(`세계 정지 플래그 감지 (engine/.world-halt) — 운영자 확인 전까지 대기:\n${read('engine/.world-halt')}`);
@@ -260,6 +273,7 @@ async function main() {
     }
     for (const w of weeklyDueWeeks()) runWeekly(w);
     if (Date.now() >= next.getTime()) {
+      saveRunnerState(null, { generating: true });
       try {
         await fireEvent();
       } catch (e) {
@@ -267,6 +281,7 @@ async function main() {
       }
       next = nextEventTime();
       log(`다음 이벤트 예정: ${next.toLocaleString('ko-KR', { hour12: false })}`);
+      saveRunnerState(next);
     }
     await sleep(Math.min(30000, Math.max(1000, next.getTime() - Date.now())));
   }

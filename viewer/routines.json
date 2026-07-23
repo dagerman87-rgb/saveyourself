@@ -1,0 +1,88 @@
+{
+  "_note": "앰비언트 루틴 (WO-011). AI 없이 뷰어가 이 일과표대로 인물을 움직인다. 세계 데이터가 아니라 연출 데이터 — world/와 무관하며 truth를 새로 만들지 않는다. 일과표 근거는 각 인물의 직업·quirks·최근 사건 (basis 필드). 일과표 밖 시간은 home에서 취침.",
+  "characters": {
+    "rohan-the-smith": {
+      "color": "#c96342",
+      "home": "smithy",
+      "schedule": [
+        { "from": "06:30", "to": "08:00", "place": "smithy", "activity": "화덕 불 올리기" },
+        { "from": "08:00", "to": "12:00", "place": "smithy", "activity": "벼리기" },
+        { "from": "12:00", "to": "13:00", "place": "apple-yard", "activity": "사과나무 아래 점심" },
+        { "from": "13:00", "to": "17:30", "place": "smithy", "activity": "오후 작업" },
+        { "from": "17:30", "to": "18:30", "place": "dock", "activity": "납품·바람 쐬기" },
+        { "from": "18:30", "to": "20:00", "place": "market", "activity": "저녁 거리·소식 듣기" },
+        { "from": "20:00", "to": "22:30", "place": "smithy", "activity": "가게 정리" }
+      ],
+      "basis": "대장장이 — 대장간이 집이자 일터. 점심은 quirk '비 오는 날마다 아내가 심은 사과나무 아래서 점심'에서 — v1은 날씨 연동 없이 매일 사과나무 마당으로 단순화(뷰어 연출). 저녁 부두·시장 동선은 납품 일감(조합 낚싯바늘 등 log 근거)과 채무·평판 문제로 바깥 소식에 민감한 처지 반영."
+    },
+    "mira-the-baker": {
+      "color": "#d9a441",
+      "home": "bakery",
+      "schedule": [
+        { "from": "04:00", "to": "06:00", "place": "bakery", "activity": "새벽 화덕·첫 굽기" },
+        { "from": "06:00", "to": "06:30", "place": "dock", "activity": "첫 빵 부두에 놓기" },
+        { "from": "06:30", "to": "13:00", "place": "bakery", "activity": "아침 판매" },
+        { "from": "13:00", "to": "14:00", "place": "market", "activity": "장보기·갯벌 소식 묻기" },
+        { "from": "14:00", "to": "19:00", "place": "bakery", "activity": "오후 판매·반죽" },
+        { "from": "19:00", "to": "21:00", "place": "bakery", "activity": "정리·다음 날 준비" }
+      ],
+      "basis": "빵집 주인 — 새벽 화덕은 제빵업 특성. 06시 부두행은 quirk '첫 빵은 항상 팔지 않고 부두에 놓아둔다' 그대로. 시장 장보기 중 '갯벌 소식 묻기'는 public known_details(4주) 근거."
+    },
+    "yeron-the-fisher": {
+      "color": "#4a7fa5",
+      "home": "fisher-hut",
+      "schedule": [
+        { "from": "05:30", "to": "07:00", "place": "dock", "activity": "갈매기들에게 아침 인사·부두 둘러보기" },
+        { "from": "07:00", "to": "11:00", "place": "dock", "activity": "배 손질 (오르기 전 뱃머리 두 번)" },
+        { "from": "11:00", "to": "12:30", "place": "market", "activity": "조합 사람들과 어울리기" },
+        { "from": "12:30", "to": "14:30", "place": "fisher-hut", "activity": "낮잠" },
+        { "from": "14:30", "to": "17:00", "place": "dock", "activity": "손자 항해 수업" },
+        { "from": "17:00", "to": "19:00", "place": "dock", "activity": "부두 산책" },
+        { "from": "19:00", "to": "21:00", "place": "fisher-hut", "activity": "귀가·저녁" }
+      ],
+      "basis": "늙은 어부 — 부두 중심 생활. 갈매기 인사는 quirk '갈매기들에게 전부 이름을 붙여 부른다', 뱃머리 두 번은 quirk 그대로. 오후 항해 수업은 wish(손자에게 항해술) + scar(first-water-lesson) 근거. 일찍 귀가하는 저녁은 scar '그날 이후 밤바다를 보지 않는다' 반영 — 단 three-doors(6주) 이후 창은 닫지 않고 잔다."
+    },
+    "isen-the-scribe": {
+      "color": "#7d6b9e",
+      "home": "temple",
+      "schedule": [
+        { "from": "07:00", "to": "08:00", "place": "temple", "activity": "신전 뜰 아침 정리" },
+        { "from": "08:00", "to": "12:00", "place": "temple", "activity": "기록실 — 공식 기록 (오른손)" },
+        { "from": "12:00", "to": "13:00", "place": "oldtown", "activity": "구시가 심부름·끼니" },
+        { "from": "13:00", "to": "15:00", "place": "temple", "activity": "기록실 필사" },
+        { "from": "15:00", "to": "15:45", "place": "market", "activity": "항구 순회 — 시세·소문 수집" },
+        { "from": "15:45", "to": "16:30", "place": "port-lane", "activity": "대장간 골목에서 서성이기" },
+        { "from": "16:30", "to": "19:00", "place": "temple", "activity": "기록실 정리" },
+        { "from": "19:00", "to": "23:30", "place": "temple", "activity": "촛불 아래 왼손의 기록, 소리 내어 읽기" }
+      ],
+      "basis": "신전 서기 — 신전(언덕)이 집이자 일터. 저녁 낭독은 quirk '촛불을 끄기 전 그날 쓴 글을 소리 내어 읽는다', 왼손 기록은 quirk '공식 기록은 오른손, 진심은 왼손'. 오후 항구 순회·대장간 골목 서성임은 로한 관계 note '이제는 대장간 주변을 맴돈다' 근거."
+    },
+    "kalla-the-market-warden": {
+      "color": "#5e8c61",
+      "home": "port-lane",
+      "schedule": [
+        { "from": "07:00", "to": "08:00", "place": "market", "activity": "시장 개장 준비" },
+        { "from": "08:00", "to": "12:00", "place": "market", "activity": "순찰·징수 (동전은 두 번 세기)" },
+        { "from": "12:00", "to": "13:00", "place": "market", "activity": "관리소 점심" },
+        { "from": "13:00", "to": "17:00", "place": "dock", "activity": "부두 부역·자릿세 감독" },
+        { "from": "17:00", "to": "19:30", "place": "market", "activity": "장부 정리" },
+        { "from": "19:30", "to": "21:30", "place": "port-lane", "activity": "셋집 귀가" }
+      ],
+      "basis": "시장 관리인 — 시장 상주 + 오후 부두 감독은 scar(saltfolk-on-the-dock, 부역 감독) 근거. 동전 두 번 세기는 quirk (궤 열람 후 '한 번만 세었다' scar가 있으나 습관 자체는 유지로 해석 — QA 판단 요청). 거주지는 항구 골목 셋집으로 배치(임의 — 항구 구역 거주에 숨은 욕망이 '언덕 이주'이므로 언덕이 아닌 항구 골목)."
+    },
+    "taru-of-the-saltfields": {
+      "color": "#8a8f66",
+      "home": "bakery",
+      "schedule": [
+        { "from": "04:00", "to": "07:00", "place": "bakery", "activity": "새벽 화덕 일" },
+        { "from": "07:00", "to": "09:00", "place": "bakery", "activity": "심부름·청소" },
+        { "from": "09:00", "to": "12:30", "place": "saltfields", "activity": "식구 곁 — 소금밭 일 돕기" },
+        { "from": "12:30", "to": "15:30", "place": "mudflat-huts", "activity": "식구와 끼니 (빵은 반으로 갈라 절반은 내일)" },
+        { "from": "15:30", "to": "17:00", "place": "saltfields", "activity": "갯벌 일 마무리" },
+        { "from": "17:00", "to": "18:30", "place": "port-lane", "activity": "빵 굽는 골목 어슬렁" },
+        { "from": "18:30", "to": "20:30", "place": "bakery", "activity": "저녁 잔일" }
+      ],
+      "basis": "소금밭 아이 — 6주부터 빵집 새벽 일꾼(scar the-child-is-hired), 최근 이벤트로 화덕 뒤 짚자리에서 묵으므로 home을 bakery로(주소지는 여전히 갯벌 — 인물 카드에는 world 데이터의 mudflat-district가 표시됨). 낮의 갯벌 왕복은 surface desire '식구 몫을 하는 것'. 저녁 골목 배회는 hidden desire '빵 굽는 냄새가 나는 항구 골목에서 살고 싶다'. 빵 반 가르기는 quirk 그대로."
+    }
+  }
+}
