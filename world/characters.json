@@ -18,14 +18,16 @@
     "scars": [
       { "cycle": null, "event_id": "warehouse-fire", "mark": "그날 본 것을 누구에게도 말하지 못했다. 화재 종소리를 들으면 손이 떨린다" },
       { "cycle": 1, "event_id": "notice-plate-forged", "mark": "빚 때문에 자릿세 고지 철판을 만들었다. 조합 사람들의 시선을 피해 가게 문을 반쯤만 열게 되었다" },
-      { "cycle": 2, "event_id": "apple-leaf-found", "mark": "예론이 아무 말 없이 낡은 닻고리 수리를 맡기고 갔다. 그날 저녁 가게 문을 다시 활짝 열었다" }
+      { "cycle": 2, "event_id": "apple-leaf-found", "mark": "예론이 아무 말 없이 낡은 닻고리 수리를 맡기고 갔다. 그날 저녁 가게 문을 다시 활짝 열었다" },
+      { "cycle": 3, "event_id": "scribe-at-the-plate", "mark": "철판을 베껴 간 신전 서기가 마당의 사과나무를 오래 바라보는 것을 가게 안에서 지켜보았다. 그날 밤 처음으로, 잎 문양을 갈아 없앨까 생각했다" }
     ],
     "relationships": {
       "mira-the-baker": { "type": "채무", "note": "화재 후 대장간 재건 자금을 빌렸다. 상환이 밀려 거절 못 할 일감이 늘고 있다", "tension": 40 },
       "kalla-the-market-warden": { "type": "거래", "note": "자릿세 고지 철판을 주문받아 만들었다. 받은 일감이 부두에서의 평판을 갉아먹는다", "tension": 20 },
-      "yeron-the-fisher": { "type": "은혜", "note": "조합 사람들이 등을 돌리던 때에 말없이 일감을 맡기고 갔다. 이유는 묻지 못했다", "tension": 10 }
+      "yeron-the-fisher": { "type": "은혜", "note": "조합 사람들이 등을 돌리던 때에 말없이 일감을 맡기고 갔다. 이유는 묻지 못했다", "tension": 10 },
+      "isen-the-scribe": { "type": "갈등", "note": "화재 증언을 캐묻더니 이제는 대장간 주변을 맴돈다. 무엇을 알아챘는지 알 수 없다", "tension": 25 }
     },
-    "tension": 25
+    "tension": 30
   },
   {
     "id": "mira-the-baker",
@@ -64,7 +66,7 @@
       "hidden": "사실 바다에 나가는 것이 무서워졌다"
     },
     "secret": "지난달 실종된 어부 3명이 나가던 밤, 폭풍 경고를 보고도 말하지 않았다",
-    "wish": { "text": "손자에게 항해술을 가르치는 것", "status": "open", "note": "대치가 풀리면 미룰 명분이 사라진다. 손자는 기다리다 지쳐 물때표를 혼자 외우기 시작했다" },
+    "wish": { "text": "손자에게 항해술을 가르치는 것", "status": "open", "note": "수업이 시작되었다. 다만 배는 부두에 묶인 채다 — 매듭은 가르쳤으나 항해술은 아직 바다를 만나지 못했다" },
     "quirks": [
       "부두 갈매기들에게 전부 이름을 붙여 부른다",
       "배에 오르기 전 반드시 뱃머리를 두 번 두드린다"
@@ -72,13 +74,15 @@
     "scars": [
       { "cycle": null, "event_id": "fishermen-lost", "mark": "폭풍 전조를 보고도 침묵했다. 그날 이후 밤바다를 보지 않는다" },
       { "cycle": 1, "event_id": "dock-fee-standoff", "mark": "자릿세 싸움의 앞에 서게 되었다. 바다에 나가지 않을 이유가 생겨 안도했고, 그 안도가 부끄럽다. 손자의 항해 수업은 또 미뤄졌다" },
-      { "cycle": 2, "event_id": "fee-truce-offer", "mark": "조합원들이 승리라 부르는 유예안이 그에게는 마감시한처럼 들린다. 답을 미루는 이유를 아무에게도 설명할 수 없다" }
+      { "cycle": 2, "event_id": "fee-truce-offer", "mark": "조합원들이 승리라 부르는 유예안이 그에게는 마감시한처럼 들린다. 답을 미루는 이유를 아무에게도 설명할 수 없다" },
+      { "cycle": 3, "event_id": "truce-signed-without-yeron", "mark": "자리를 비운 사이 조합이 유예안에 서명했고, 그의 이름이 맨 위에 올라 있었다. 싸움이 끝났고, 바다에 나가지 않을 명분도 함께 끝났다" },
+      { "cycle": 3, "event_id": "first-knot-lesson", "mark": "부두에 묶인 배 위에서 손자에게 매듭부터 가르치기 시작했다. '뱃머리는 왜 두 번 두드려요'라는 물음에 답하지 못했다" }
     ],
     "relationships": {
-      "kalla-the-market-warden": { "type": "갈등", "note": "자릿세 인상에 맞서 납부 거부를 이끌었다. 유예안이 나온 뒤로는 싸움보다 싸움이 끝나는 것이 더 두렵다", "tension": 35 },
-      "rohan-the-smith": { "type": "비밀공유", "note": "고지 철판 귀퉁이의 잎 문양이 누구의 것인지 안다. 말하지 않기로 했다", "tension": 10 }
+      "kalla-the-market-warden": { "type": "갈등", "note": "대치는 그가 없는 자리에서 끝났다. 관리인과 다툴 일은 줄었으나, 서명 목록 맨 위의 제 이름을 볼 때마다 속이 얹힌다", "tension": 20 },
+      "rohan-the-smith": { "type": "비밀공유", "note": "고지 철판 귀퉁이의 잎 문양이 누구의 것인지 안다. 말하지 않기로 했다. 신전 서기가 문양을 베껴 갔다는 말이 마음에 걸린다", "tension": 15 }
     },
-    "tension": 55
+    "tension": 60
   },
   {
     "id": "isen-the-scribe",
@@ -96,11 +100,13 @@
       "공식 기록은 오른손, 진심은 왼손으로 쓴다",
       "촛불을 끄기 전 그날 쓴 글을 소리 내어 읽는다"
     ],
-    "scars": [],
+    "scars": [
+      { "cycle": 3, "event_id": "scribe-at-the-plate", "mark": "잎 문양을 베껴 그리다 대장간 마당의 사과나무를 보았다. 공식 기록에는 적지 않았다. 왼손의 기록이 처음으로 공식 기록과 다른 내용을 담게 되었다" }
+    ],
     "relationships": {
-      "rohan-the-smith": { "type": "갈등", "note": "화재 증언 기록을 요청했다 거절당했다", "tension": 20 }
+      "rohan-the-smith": { "type": "갈등", "note": "화재 증언은 거절당했지만, 이제는 묻지 않고도 알게 되는 것이 생겼다. 잎 문양의 주인을 짐작하고 있다", "tension": 30 }
     },
-    "tension": 20
+    "tension": 30
   },
   {
     "id": "kalla-the-market-warden",
@@ -121,11 +127,12 @@
     ],
     "scars": [
       { "cycle": 1, "event_id": "dock-fee-standoff", "mark": "고지문 앞에서 조합원들과 언쟁하다 처음으로 갯벌 말씨가 튀어나왔다. 누가 들었는지 확신하지 못한다" },
-      { "cycle": 2, "event_id": "fee-truce-offer", "mark": "처음으로 먼저 물러섰다. 유예안을 써 붙이던 날 밤, 장부를 처음부터 끝까지 두 번 다시 세어보았다" }
+      { "cycle": 2, "event_id": "fee-truce-offer", "mark": "처음으로 먼저 물러섰다. 유예안을 써 붙이던 날 밤, 장부를 처음부터 끝까지 두 번 다시 세어보았다" },
+      { "cycle": 3, "event_id": "truce-signed-without-yeron", "mark": "유예안이 받아들여진 날의 안도는 한나절을 가지 못했다. '걷은 자릿세는 어디에 쓰였나'라는 물음이 시장에 돌기 시작한 뒤로, 장부를 세는 손이 두 번에서 세 번으로 늘었다" }
     ],
     "relationships": {
-      "yeron-the-fisher": { "type": "갈등", "note": "유예안을 내밀었는데 조합이 답을 주지 않는다. 저 늙은이가 무엇을 더 바라는지 읽을 수 없어 불안하다", "tension": 40 }
+      "yeron-the-fisher": { "type": "갈등", "note": "조합은 답했지만 저 늙은이 본인의 답은 끝내 듣지 못했다. 대치가 끝났는데도 그 침묵이 마음에 걸린다", "tension": 25 }
     },
-    "tension": 45
+    "tension": 55
   }
 ]
