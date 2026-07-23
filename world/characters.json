@@ -5,7 +5,10 @@
     "role": "대장장이",
     "district": "port-district",
     "status": "alive",
-    "home": { "place": "smithy", "desc": "대장간 딸린 살림집" },
+    "home": {
+      "place": "smithy",
+      "desc": "대장간 딸린 살림집"
+    },
     "public": {
       "intro": "항구 구역의 대장장이.",
       "known_details": [
@@ -78,7 +81,10 @@
     "role": "빵집 주인",
     "district": "port-district",
     "status": "alive",
-    "home": { "place": "bakery", "desc": "빵집 이층 살림방" },
+    "home": {
+      "place": "bakery",
+      "desc": "빵집 이층 살림방"
+    },
     "public": {
       "intro": "항구 구역의 빵집 주인. 실종된 동생이 있다.",
       "known_details": [
@@ -138,7 +144,7 @@
       },
       "taru-of-the-saltfields": {
         "type": "거래",
-        "note": "새벽 화덕 일꾼으로 들였다. 조개껍데기의 뜻을 알고도 목걸이를 풀지 않았다. 아이 편에 갯벌 소식을 묻는다. 갯벌에서 새벽길을 오지 않게 화덕 뒤에 잠자리를 내주었다",
+        "note": "새벽 화덕 일꾼으로 들였다. 조개껍데기의 뜻을 알고도 목걸이를 풀지 않았다. 아이 편에 갯벌 소식을 묻는다. 갯벌에서 새벽길을 오지 않게 화덕 뒤에 잠자리를 내주었다. 첫 새벽, 부두에 놓을 첫 빵을 아이 손에 들려 보냈다 — 아이가 훔치듯 가져가던 그 빵을",
         "tension": 25
       }
     },
@@ -150,7 +156,10 @@
     "role": "늙은 어부",
     "district": "port-district",
     "status": "alive",
-    "home": { "place": "fisher-hut", "desc": "부두 곁 오두막" },
+    "home": {
+      "place": "fisher-hut",
+      "desc": "부두 곁 오두막"
+    },
     "public": {
       "intro": "항구 구역의 늙은 어부.",
       "known_details": [
@@ -243,7 +252,10 @@
     "role": "신전 서기",
     "district": "hill-district",
     "status": "alive",
-    "home": { "place": "temple", "desc": "신전 기록실 곁방" },
+    "home": {
+      "place": "temple",
+      "desc": "신전 기록실 곁방"
+    },
     "public": {
       "intro": "언덕 구역, 신전 기록실의 서기. 공식 기록에 이름이 오른 적은 없다.",
       "known_details": []
@@ -294,7 +306,10 @@
     "district": "port-district",
     "origin_district": "mudflat-district",
     "status": "alive",
-    "home": { "place": "port-lane", "desc": "항구 골목 셋집" },
+    "home": {
+      "place": "port-lane",
+      "desc": "항구 골목 셋집"
+    },
     "public": {
       "intro": "항구 구역의 시장 관리인. 갯벌 구역 출신이라는 사실이 5주 궤 열람 소동 때 알려졌다.",
       "known_details": [
@@ -360,7 +375,10 @@
     "role": "소금밭 아이",
     "district": "mudflat-district",
     "status": "alive",
-    "home": { "place": "bakery", "desc": "빵집 화덕 뒤 짚자리" },
+    "home": {
+      "place": "bakery",
+      "desc": "빵집 화덕 뒤 짚자리"
+    },
     "public": {
       "intro": "갯벌 구역 소금밭의 아이. 6주부터 항구의 빵집에서 새벽 일꾼으로 일한다.",
       "known_details": [
@@ -396,7 +414,7 @@
     "relationships": {
       "mira-the-baker": {
         "type": "은혜",
-        "note": "새벽마다 가져가던 빵의 주인 밑에서 일하게 되었다. 주인이 처음부터 알면서 두었다는 것도 알게 되었다. 꿀빵 생각을 하면 빵 반죽이 무겁다. 첫날 밤을 화덕 뒤 짚자리에서 묵었다",
+        "note": "새벽마다 가져가던 빵의 주인 밑에서 일하게 되었다. 주인이 처음부터 알면서 두었다는 것도 알게 되었다. 꿀빵 생각을 하면 빵 반죽이 무겁다. 첫날 밤을 화덕 뒤 짚자리에서 묵었다. 첫 새벽, 훔치듯 가져가던 그 빵을 이제 제 손으로 부두에 놓았다",
         "tension": 15
       }
     },
