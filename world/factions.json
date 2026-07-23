@@ -5,7 +5,9 @@
     "kind": "faction",
     "stance": "어부와 상인의 생계와 이익을 지킨다",
     "note": "궤 열람으로 자릿세 물음이 일단 가라앉았다. 밀린 품삯이 지급되고 자재가 주문되어 부역은 재개되었으나, 품팔이 삯이 헐하다는 말은 남아 있다",
-    "members": ["yeron-the-fisher"],
+    "members": [
+      "yeron-the-fisher"
+    ],
     "tension": 10
   },
   {
@@ -14,7 +16,9 @@
     "kind": "faction",
     "stance": "기록과 신탁의 권위를 지킨다",
     "note": "갯벌에 곡식 스무 섬을 내려 원망을 달랬으나, '다음 신탁은 갯벌에도 먼저 알려 달라'는 요구를 받았다. 신탁을 누구에게까지 내릴 것인가에 대한 답을 정하지 못하고 있다",
-    "members": ["isen-the-scribe"],
+    "members": [
+      "isen-the-scribe"
+    ],
     "tension": 25
   },
   {

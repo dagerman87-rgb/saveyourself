@@ -2,7 +2,10 @@
   {
     "id": "temple-mudflat-oracle-access",
     "name": "신탁 접근권 — 신전×갯벌",
-    "parties": ["temple", "mudflat-district"],
+    "parties": [
+      "temple",
+      "mudflat-district"
+    ],
     "note": "'다음 신탁은 갯벌에도 먼저 알려 달라'는 요구에 신전이 답하지 않고 있다. 사이클 6 기준 합 70(경계선) — 감시 대상.",
     "status": "open",
     "over_threshold_since": 6
@@ -10,7 +13,10 @@
   {
     "id": "isen-rohan-leaf-mark",
     "name": "잎 문양과 화재 증언 — 이센×로한",
-    "parties": ["isen-the-scribe", "rohan-the-smith"],
+    "parties": [
+      "isen-the-scribe",
+      "rohan-the-smith"
+    ],
     "note": "이센이 잎 문양의 주인을 짐작하며 왼손 기록이 두꺼워지는 중. 로한은 문양을 갈아 없앨까 생각한 상태. 사이클 6 기준 합 70(경계선) — 감시 대상.",
     "status": "open",
     "over_threshold_since": 6
@@ -18,7 +24,10 @@
   {
     "id": "mira-taru-shells",
     "name": "조개껍데기의 오해 — 미라×타루",
-    "parties": ["mira-the-baker", "taru-of-the-saltfields"],
+    "parties": [
+      "mira-the-baker",
+      "taru-of-the-saltfields"
+    ],
     "note": "오해가 사실로 대체되고 고용 관계로 전환되며 해소 (the-child-is-hired, 사이클 6). 잔불: 동생 생존의 믿음이 갯벌로 이전.",
     "status": "resolved",
     "over_threshold_since": null
@@ -26,7 +35,10 @@
   {
     "id": "yeron-dock-whispers",
     "name": "그 눈의 수군거림 — 예론×부두",
-    "parties": ["yeron-the-fisher", "port-district"],
+    "parties": [
+      "yeron-the-fisher",
+      "port-district"
+    ],
     "note": "세 유가족 방문(three-doors, 사이클 6)으로 공적 축 해소. 잔불: 듣기를 거부한 큰아들.",
     "status": "resolved",
     "over_threshold_since": null
@@ -34,7 +46,10 @@
   {
     "id": "yeron-kalla-fee-dispute",
     "name": "자릿세 대치 — 예론×칼라",
-    "parties": ["yeron-the-fisher", "kalla-the-market-warden"],
+    "parties": [
+      "yeron-the-fisher",
+      "kalla-the-market-warden"
+    ],
     "note": "자릿세 인상 고지(사이클 1)에서 유예안·우회 서명·장부 물음으로 이어진 축. 사이클 5의 궤 열람(the-chest-is-opened)으로 분출 겸 해소. 해소 사이클: 5. (WO-008 소급 등재)",
     "status": "resolved",
     "over_threshold_since": null
