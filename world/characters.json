@@ -1,0 +1,107 @@
+[
+  {
+    "id": "rohan-the-smith",
+    "name": "로한",
+    "role": "대장장이",
+    "status": "alive",
+    "desires": {
+      "surface": "대장간을 아들에게 물려주는 것",
+      "hidden": "이 도시를 떠나고 싶다"
+    },
+    "secret": "10년 전 화재의 목격자",
+    "wish": "죽은 아내의 고향 바다를 한 번 보는 것",
+    "quirks": [
+      "비 오는 날마다 아내가 심은 사과나무 아래서 점심을 먹는다",
+      "왼손잡이지만 사람들 앞에서는 오른손을 쓴다"
+    ],
+    "scars": [],
+    "relationships": {
+      "mira-the-baker": { "type": "채무", "tension": 40 }
+    },
+    "tension": 25
+  },
+  {
+    "id": "mira-the-baker",
+    "name": "미라",
+    "role": "빵집 주인",
+    "status": "alive",
+    "desires": {
+      "surface": "화재 이후 재건한 빵집을 지키는 것",
+      "hidden": "화재 때 실종된 동생이 살아있다고 믿고 찾고 싶다"
+    },
+    "secret": "동생의 유품에서 발견한, 뜻을 알 수 없는 창고 열쇠를 갖고 있다",
+    "wish": "동생 생일에 그 애가 좋아하던 꿀빵을 함께 먹는 것",
+    "quirks": [
+      "첫 빵은 항상 팔지 않고 부두에 놓아둔다",
+      "손님 이름을 절대 안 잊는다"
+    ],
+    "scars": [],
+    "relationships": {
+      "rohan-the-smith": { "type": "채권", "tension": 40 }
+    },
+    "tension": 30
+  },
+  {
+    "id": "yeron-the-fisher",
+    "name": "예론",
+    "role": "늙은 어부",
+    "status": "alive",
+    "desires": {
+      "surface": "마지막 남은 배 한 척을 지키는 것",
+      "hidden": "사실 바다에 나가는 것이 무서워졌다"
+    },
+    "secret": "지난달 실종된 어부 3명이 나가던 밤, 폭풍 경고를 보고도 말하지 않았다",
+    "wish": "손자에게 항해술을 가르치는 것",
+    "quirks": [
+      "부두 갈매기들에게 전부 이름을 붙여 부른다",
+      "배에 오르기 전 반드시 뱃머리를 두 번 두드린다"
+    ],
+    "scars": [],
+    "relationships": {
+      "kalla-the-market-warden": { "type": "시장 자릿세 갈등", "tension": 35 }
+    },
+    "tension": 45
+  },
+  {
+    "id": "isen-the-scribe",
+    "name": "이센",
+    "role": "신전 서기",
+    "status": "alive",
+    "desires": {
+      "surface": "도시의 기록을 완전하게 보존하는 것",
+      "hidden": "자신이 옮겨 적는 신탁을 의심하고 있다"
+    },
+    "secret": "창시 신화 원본에서 한 페이지를 찢어 숨겨두었다",
+    "wish": "자기 이름으로 된 역사서 한 권을 남기는 것",
+    "quirks": [
+      "공식 기록은 오른손, 진심은 왼손으로 쓴다",
+      "촛불을 끄기 전 그날 쓴 글을 소리 내어 읽는다"
+    ],
+    "scars": [],
+    "relationships": {
+      "rohan-the-smith": { "type": "화재 증언 기록을 거절당한 사이", "tension": 20 }
+    },
+    "tension": 20
+  },
+  {
+    "id": "kalla-the-market-warden",
+    "name": "칼라",
+    "role": "시장 관리인",
+    "status": "alive",
+    "desires": {
+      "surface": "시장세를 성실히 걷어 인정받는 것",
+      "hidden": "언덕 구역으로 올라가 출신을 지우는 것"
+    },
+    "secret": "징수 장부를 조금씩 조작해 돈을 모으고 있다",
+    "wish": "자기 이름을 건 가게 한 칸",
+    "quirks": [
+      "갯벌 사람 앞에서는 일부러 언덕 말씨를 쓴다",
+      "동전을 셀 때 반드시 두 번 센다"
+    ],
+    "scars": [],
+    "relationships": {
+      "yeron-the-fisher": { "type": "시장 자릿세 갈등", "tension": 35 }
+    },
+    "tension": 30
+  }
+]

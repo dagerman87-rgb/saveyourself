@@ -1,0 +1,20 @@
+[
+  {
+    "id": "founding-myth",
+    "cycle": null,
+    "date": "미상 (창시기)",
+    "truth": "미기록",
+    "public_knowledge": "바다가 하룻밤에 물러나며 도시 자리를 내주었다. 언젠가 바다가 되찾으러 온다는 약속과 함께.",
+    "affected": ["mirhan"],
+    "tension_delta": 0
+  },
+  {
+    "id": "warehouse-fire",
+    "cycle": -3650,
+    "date": "10년 전",
+    "truth": "미기록",
+    "public_knowledge": "원인 미상의 화재로 창고 구역 소실, 사상자 다수",
+    "affected": ["port-district"],
+    "tension_delta": 0
+  }
+]
