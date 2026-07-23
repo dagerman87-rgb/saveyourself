@@ -3,7 +3,8 @@ name: Weekly QA digest
 
 on:
   schedule:
-    - cron: "0 21 * * 6" # 일요일 KST 06:00
+    # 일요일 KST 06:00
+    - cron: "0 21 * * 6"
   workflow_dispatch:
 
 permissions:
