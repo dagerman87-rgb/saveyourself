@@ -1,11 +1,8 @@
-# 사이클 자동 실행 (WO-008): 매일 KST 05:00 (UTC 20:00) 1사이클.
-# 실패(API 오류 포함) 시 커밋 없이 종료 — 다음 날 크론이 이어서 실행 (사이클 번호는 실행 순번).
-name: Daily cycle
+# 비상 스위치 (WO-010): 주간 배치 실패 시 옛 API 파이프라인(run-cycle.mjs)을 수동으로만 돌린다.
+# 크론 없음 — 실시간 세계의 정규 경로는 집컴의 event-runner.mjs + weekly.mjs다.
+name: Manual cycle (emergency)
 
 on:
-  schedule:
-    # KST 05:00
-    - cron: "0 20 * * *"
   workflow_dispatch:
 
 concurrency:

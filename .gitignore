@@ -6,3 +6,7 @@
 
 # 의존성
 engine/node_modules/
+
+# 러너 로컬 상태
+engine/.runner.lock
+engine/.runner-stats.jsonl
