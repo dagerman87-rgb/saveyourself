@@ -16,7 +16,7 @@
       "왼손잡이지만 사람들 앞에서는 오른손을 쓴다"
     ],
     "scars": [
-      { "cycle": null, "event": "창고 대화재", "mark": "그날 본 것을 누구에게도 말하지 못했다. 화재 종소리를 들으면 손이 떨린다" }
+      { "cycle": null, "event_id": "warehouse-fire", "mark": "그날 본 것을 누구에게도 말하지 못했다. 화재 종소리를 들으면 손이 떨린다" }
     ],
     "relationships": {
       "mira-the-baker": { "type": "채무", "note": "빵집 재건 자금을 빌렸다", "tension": 40 }
@@ -40,10 +40,10 @@
       "손님 이름을 절대 안 잊는다"
     ],
     "scars": [
-      { "cycle": null, "event": "창고 대화재", "mark": "동생이 실종되었다. 연기 냄새를 맡으면 하던 일을 멈춘다" }
+      { "cycle": null, "event_id": "warehouse-fire", "mark": "동생이 실종되었다. 연기 냄새를 맡으면 하던 일을 멈춘다" }
     ],
     "relationships": {
-      "rohan-the-smith": { "type": "채무", "note": "화재 후 대장간 일감을 몰아준 채권자", "tension": 40 }
+      "rohan-the-smith": { "type": "채무", "note": "화재 후 대장간 재건 자금을 빌려주었다", "tension": 40 }
     },
     "tension": 30
   },
@@ -64,7 +64,7 @@
       "배에 오르기 전 반드시 뱃머리를 두 번 두드린다"
     ],
     "scars": [
-      { "cycle": null, "event": "어부 실종", "mark": "폭풍 전조를 보고도 침묵했다. 그날 이후 밤바다를 보지 않는다" }
+      { "cycle": null, "event_id": "fishermen-lost", "mark": "폭풍 전조를 보고도 침묵했다. 그날 이후 밤바다를 보지 않는다" }
     ],
     "relationships": {
       "kalla-the-market-warden": { "type": "갈등", "note": "부두 자릿세 인상을 둘러싼 다툼", "tension": 35 }
