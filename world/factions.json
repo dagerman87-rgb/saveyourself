@@ -3,6 +3,7 @@
     "id": "dock-guild",
     "name": "부두 조합",
     "stance": "어부와 상인의 생계와 이익을 지킨다",
+    "note": "",
     "members": ["yeron-the-fisher"],
     "tension": 25
   },
@@ -10,6 +11,7 @@
     "id": "temple",
     "name": "신전",
     "stance": "기록과 신탁의 권위를 지킨다",
+    "note": "",
     "members": ["isen-the-scribe"],
     "tension": 20
   }
