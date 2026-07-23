@@ -136,6 +136,175 @@ const PLACE_ALIAS = {
 };
 const placeOf = (slug) => BUILDINGS.find((b) => b.slug === (PLACE_ALIAS[slug] ?? slug)) ?? BUILDINGS.find((b) => b.slug === 'market');
 const randIn = (b) => ({ x: b.x + 10 + Math.random() * (b.w - 20), y: b.y + b.h + 10 + Math.random() * 16 });
+const doorPoint = (slug) => { const b = placeOf(slug); return { x: b.x + b.w / 2, y: b.y + b.h + 9 }; };
+
+/* 시드 난수 — 배치가 리로드마다 흔들리지 않게 */
+const rng = (() => { let s = 20260724; return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; })();
+
+/* ---------- 환경 디테일 (WO-013 — 연출 계층, 세계 데이터 아님) ---------- */
+const PASTURE = { x: 630, y: 262, w: 82, h: 34 };   // 구시가 비탈 목장
+const GARDEN = { x: 334, y: 260, w: 78, h: 30 };    // 빵집 뒤 텃밭
+
+function inRect(x, y, r, pad = 6) { return x > r.x - pad && x < r.x + r.w + pad && y > r.y - pad && y < r.y + r.h + pad; }
+function clearOfBuildings(x, y) {
+  return !BUILDINGS.some((b) => inRect(x, y, b, 14)) && !inRect(x, y, PASTURE) && !inRect(x, y, GARDEN);
+}
+function zoneAt(x, y) { return ZONES.find((z) => z.id !== 'sea' && x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h)?.id; }
+
+function drawFenceRect(g, r, opts = {}) {
+  const post = '#8a7454', rail = '#6e5c42';
+  const step = 13;
+  const gate = opts.gate; // 'bottom' | 'left' — 중앙에 틈
+  const seg = (x1, y1, x2, y2, skipMid) => {
+    const len = Math.hypot(x2 - x1, y2 - y1), n = Math.max(2, Math.round(len / step));
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      if (skipMid && t > 0.38 && t < 0.62) continue;
+      g.appendChild(el('rect', { x: x1 + (x2 - x1) * t - 1.5, y: y1 + (y2 - y1) * t - 4, width: 3, height: 7, fill: post }));
+    }
+    for (const dy of [-2.5, 0.5]) {
+      if (skipMid) {
+        g.appendChild(el('line', { x1, y1: y1 + dy, x2: x1 + (x2 - x1) * 0.38, y2: y1 + (y2 - y1) * 0.38 + dy, stroke: rail, 'stroke-width': 1.6 }));
+        g.appendChild(el('line', { x1: x1 + (x2 - x1) * 0.62, y1: y1 + (y2 - y1) * 0.62 + dy, x2, y2: y2 + dy, stroke: rail, 'stroke-width': 1.6 }));
+      } else g.appendChild(el('line', { x1, y1: y1 + dy, x2, y2: y2 + dy, stroke: rail, 'stroke-width': 1.6 }));
+    }
+  };
+  seg(r.x, r.y, r.x + r.w, r.y);
+  seg(r.x, r.y + r.h, r.x + r.w, r.y + r.h, gate === 'bottom');
+  seg(r.x, r.y, r.x, r.y + r.h, gate === 'left');
+  seg(r.x + r.w, r.y, r.x + r.w, r.y + r.h);
+}
+function drawPine(g, x, y, s = 1) {
+  g.appendChild(el('rect', { x: x - 2 * s, y: y - 4 * s, width: 4 * s, height: 8 * s, fill: '#5e4832' }));
+  for (let i = 0; i < 3; i++) {
+    const w = (18 - i * 4.5) * s, ty = y - (6 + i * 8) * s;
+    g.appendChild(el('path', { d: `M ${x - w / 2} ${ty} L ${x} ${ty - 11 * s} L ${x + w / 2} ${ty} Z`, fill: i % 2 ? '#39543a' : '#2f4831', stroke: 'rgba(0,0,0,0.2)' }));
+  }
+}
+function drawGroundDetail(g) {
+  // 톤 변주 패치
+  for (let i = 0; i < 26; i++) {
+    const x = rng() * 1000, y = rng() * 510;
+    const z = zoneAt(x, y);
+    if (!z || !clearOfBuildings(x, y)) continue;
+    const col = { fields: '#46523a', hill: '#5a584a', port: '#6e6050', mudflat: '#6e5f48' }[z];
+    g.appendChild(el('ellipse', { cx: x, cy: y, rx: 24 + rng() * 34, ry: 12 + rng() * 16, fill: col, opacity: 0.35 }));
+  }
+  // 풀포기·들꽃 (초원·언덕 위주, 항구는 성기게)
+  for (let i = 0; i < 150; i++) {
+    const x = rng() * 1000, y = rng() * 512;
+    const z = zoneAt(x, y);
+    if (!z || !clearOfBuildings(x, y)) continue;
+    if (z === 'port' && rng() < 0.55) { // 모래 섞임
+      if (rng() < 0.4) g.appendChild(el('circle', { cx: x, cy: y, r: 1.2 + rng(), fill: '#8d7f68', opacity: 0.7 }));
+      continue;
+    }
+    if (z === 'mudflat' && rng() < 0.5) continue;
+    const gc = z === 'hill' ? '#42592f' : '#4f6b39';
+    const t = el('g');
+    for (const dx of [-2, 0, 2]) t.appendChild(el('line', { x1: x + dx, y1: y, x2: x + dx * 1.6, y2: y - 4 - rng() * 3, stroke: gc, 'stroke-width': 1.1 }));
+    g.appendChild(t);
+    if (rng() < 0.18) g.appendChild(el('circle', { cx: x + 3, cy: y - 3, r: 1.4, fill: rng() < 0.5 ? '#e8e3c8' : '#d9b84a' }));
+  }
+  // 잡목·덤불
+  for (let i = 0; i < 9; i++) {
+    const x = 30 + rng() * 940, y = 30 + rng() * 460;
+    if (!clearOfBuildings(x, y) || zoneAt(x, y) === 'mudflat') continue;
+    const s = 0.7 + rng() * 0.6;
+    g.appendChild(el('ellipse', { cx: x, cy: y + 3 * s, rx: 10 * s, ry: 4 * s, fill: 'rgba(0,0,0,0.18)' }));
+    g.appendChild(el('circle', { cx: x - 4 * s, cy: y, r: 6 * s, fill: '#465f35' }));
+    g.appendChild(el('circle', { cx: x + 4 * s, cy: y - 1, r: 6.5 * s, fill: '#516b3c' }));
+    g.appendChild(el('circle', { cx: x, cy: y - 4 * s, r: 5.5 * s, fill: '#5b7843' }));
+  }
+  // 언덕 소나무 4그루
+  for (const [px, py, s] of [[648, 92, 1.1], [706, 44, 0.9], [924, 74, 1.2], [956, 168, 0.95]]) drawPine(g, px, py, s);
+  // 바위
+  for (const [x, y, s] of [[68, 250, 1], [590, 240, 0.8], [860, 300, 1.1], [130, 90, 0.9]]) {
+    g.appendChild(el('path', { d: `M ${x} ${y} l ${8 * s} ${-5 * s} l ${9 * s} ${3 * s} l ${2 * s} ${7 * s} l ${-14 * s} ${3 * s} Z`, fill: '#7b7568', stroke: '#57524a' }));
+    g.appendChild(el('path', { d: `M ${x + 3 * s} ${y - 2 * s} l ${6 * s} ${-2 * s} l ${4 * s} ${3 * s}`, fill: 'none', stroke: '#918b7d', 'stroke-width': 1 }));
+  }
+  // 갯벌: 물웅덩이 + 갈대숲
+  for (const [x, y, rx, ry] of [[652, 470, 22, 8], [742, 508, 18, 6], [828, 490, 26, 9]]) {
+    g.appendChild(el('ellipse', { cx: x, cy: y, rx, ry, fill: '#4e5a52', opacity: 0.75 }));
+    g.appendChild(el('ellipse', { cx: x - 3, cy: y - 1, rx: rx * 0.6, ry: ry * 0.5, fill: '#6a7a6e', opacity: 0.5 }));
+  }
+  for (let i = 0; i < 30; i++) {
+    const x = 628 + rng() * 350, y = 452 + rng() * 62;
+    if (!clearOfBuildings(x, y)) continue;
+    const r = el('g');
+    for (const dx of [-2, 0, 2]) {
+      r.appendChild(el('line', { x1: x + dx, y1: y, x2: x + dx * 1.8, y2: y - 9 - rng() * 5, stroke: '#8a8a58', 'stroke-width': 1.2 }));
+      r.appendChild(el('ellipse', { cx: x + dx * 1.8, cy: y - 10 - rng() * 4, rx: 1.2, ry: 3, fill: '#a89a68' }));
+    }
+    g.appendChild(r);
+  }
+  // 밭두렁 (텃밭 아래 짧은 이랑 결)
+  for (let i = 0; i < 3; i++)
+    g.appendChild(el('line', { x1: 424, y1: 268 + i * 8, x2: 470, y2: 268 + i * 8, stroke: '#5a4f3e', 'stroke-width': 2.4, opacity: 0.5, 'stroke-linecap': 'round' }));
+}
+function drawProps(g) {
+  // 텃밭 (빵집 뒤): 이랑 + 채소
+  g.appendChild(el('rect', { x: GARDEN.x, y: GARDEN.y, width: GARDEN.w, height: GARDEN.h, fill: '#5c4c38', rx: 3 }));
+  for (let r = 0; r < 3; r++) {
+    g.appendChild(el('line', { x1: GARDEN.x + 5, y1: GARDEN.y + 7 + r * 9, x2: GARDEN.x + GARDEN.w - 5, y2: GARDEN.y + 7 + r * 9, stroke: '#4a3c2c', 'stroke-width': 3.5, 'stroke-linecap': 'round' }));
+    for (let c = 0; c < 7; c++)
+      g.appendChild(el('circle', { cx: GARDEN.x + 9 + c * 10, cy: GARDEN.y + 7 + r * 9, r: 2.2, fill: r === 1 ? '#6f8f45' : '#587a3e' }));
+  }
+  drawFenceRect(g, GARDEN, { gate: 'bottom' });
+  // 목장 (구시가 비탈)
+  g.appendChild(el('rect', { x: PASTURE.x, y: PASTURE.y, width: PASTURE.w, height: PASTURE.h, fill: '#55603f', rx: 4, opacity: 0.8 }));
+  drawFenceRect(g, PASTURE, { gate: 'left' });
+  // 부두: 통·상자·그물 걸이
+  for (const [x, y] of [[168, 512], [180, 516], [378, 512]]) {
+    g.appendChild(el('circle', { cx: x, cy: y, r: 5.5, fill: '#7a5c38', stroke: '#4e3a22' }));
+    g.appendChild(el('line', { x1: x - 5, y1: y - 1.5, x2: x + 5, y2: y - 1.5, stroke: '#4e3a22' }));
+    g.appendChild(el('line', { x1: x - 5, y1: y + 1.5, x2: x + 5, y2: y + 1.5, stroke: '#4e3a22' }));
+  }
+  for (const [x, y] of [[356, 514], [345, 519]]) {
+    g.appendChild(el('rect', { x, y, width: 11, height: 9, fill: '#8a6f48', stroke: '#5a4830' }));
+    g.appendChild(el('line', { x1: x, y1: y + 4.5, x2: x + 11, y2: y + 4.5, stroke: '#5a4830' }));
+  }
+  { // 그물 걸이
+    const nx = 220, ny = 498;
+    g.appendChild(el('line', { x1: nx, y1: ny, x2: nx, y2: ny - 14, stroke: '#5e4c33', 'stroke-width': 2.5 }));
+    g.appendChild(el('line', { x1: nx + 26, y1: ny, x2: nx + 26, y2: ny - 14, stroke: '#5e4c33', 'stroke-width': 2.5 }));
+    g.appendChild(el('line', { x1: nx, y1: ny - 13, x2: nx + 26, y2: ny - 13, stroke: '#5e4c33', 'stroke-width': 2 }));
+    for (let i = 0; i < 5; i++) g.appendChild(el('line', { x1: nx + 3 + i * 5, y1: ny - 12, x2: nx + 5 + i * 5, y2: ny - 2, stroke: '#8a7a5a', 'stroke-width': 0.8, 'stroke-dasharray': '2 1.5' }));
+  }
+  // 시장 뒤 수레
+  { const cx = 578, cy = 392;
+    g.appendChild(el('rect', { x: cx, y: cy, width: 26, height: 13, fill: '#7c5f3e', stroke: '#54462f', rx: 2 }));
+    g.appendChild(el('line', { x1: cx + 26, y1: cy + 3, x2: cx + 36, y2: cy + 1, stroke: '#54462f', 'stroke-width': 2 }));
+    g.appendChild(el('circle', { cx: cx + 6, cy: cy + 14, r: 4.5, fill: 'none', stroke: '#3f3627', 'stroke-width': 2 }));
+    g.appendChild(el('circle', { cx: cx + 20, cy: cy + 14, r: 4.5, fill: 'none', stroke: '#3f3627', 'stroke-width': 2 }));
+  }
+  // 빨랫줄 (항구 골목 옆) — 빨래는 낮에만 (.laundry)
+  { const x1 = 246, y1 = 428, x2 = 296, y2 = 424;
+    g.appendChild(el('line', { x1, y1: y1 - 14, x2: x1, y2: y1, stroke: '#5e4c33', 'stroke-width': 2.5 }));
+    g.appendChild(el('line', { x1: x2, y1: y2 - 14, x2, y2, stroke: '#5e4c33', 'stroke-width': 2.5 }));
+    g.appendChild(el('path', { d: `M ${x1} ${y1 - 13} Q ${(x1 + x2) / 2} ${y1 - 9} ${x2} ${y2 - 13}`, fill: 'none', stroke: '#c8c0a8', 'stroke-width': 1 }));
+    const cols = ['#c8b89a', '#9db0b5', '#c2a4a0'];
+    cols.forEach((c, i) => g.appendChild(el('rect', { x: x1 + 8 + i * 14, y: y1 - 12 + i, width: 9, height: 8, fill: c, class: 'laundry', rx: 1 })));
+  }
+  // 우물 (항구 골목께)
+  { const wx = 388, wy = 452;
+    g.appendChild(el('circle', { cx: wx, cy: wy, r: 8, fill: '#8a8578', stroke: '#57524a', 'stroke-width': 2 }));
+    g.appendChild(el('circle', { cx: wx, cy: wy, r: 4, fill: '#3a4448' }));
+    g.appendChild(el('line', { x1: wx - 7, y1: wy - 6, x2: wx - 7, y2: wy - 16, stroke: '#5e4c33', 'stroke-width': 2 }));
+    g.appendChild(el('line', { x1: wx + 7, y1: wy - 6, x2: wx + 7, y2: wy - 16, stroke: '#5e4c33', 'stroke-width': 2 }));
+    g.appendChild(el('path', { d: `M ${wx - 10} ${wy - 15} L ${wx} ${wy - 21} L ${wx + 10} ${wy - 15} Z`, fill: '#6e5a42', stroke: '#4a3c28' }));
+  }
+}
+function drawGulls(g) {
+  for (const [cx, cy, r, dur, s] of [[280, 460, 46, 26, 1], [300, 445, 64, 34, 0.8], [255, 470, 30, 20, 0.7]]) {
+    const orbit = el('g', { class: 'gull-orbit', style: `transform-origin:${cx}px ${cy}px; animation-duration:${dur}s` });
+    orbit.appendChild(el('path', {
+      d: `M ${cx + r - 5} ${cy} q 3 -3 5 0 q 2 -3 5 0`,
+      fill: 'none', stroke: '#e8e6dc', 'stroke-width': 1.6 * s, 'stroke-linecap': 'round',
+    }));
+    g.appendChild(orbit);
+  }
+}
 
 /* ---------- 건물 그리기 (지붕·벽·문 탑뷰) ---------- */
 function drawBuilding(g, b) {
@@ -179,11 +348,8 @@ function drawBuilding(g, b) {
       break;
     }
     case 'apple-yard': { // 울타리 + 사과나무 (로한 서사의 성지)
-      for (let i = 0; i < 4; i++) {
-        add(el('rect', { x: b.x + i * (b.w / 3.2), y: b.y + b.h - 4, width: 3, height: 8, fill: '#8a7454' }));
-        add(el('rect', { x: b.x + i * (b.w / 3.2), y: b.y - 2, width: 3, height: 8, fill: '#8a7454' }));
-      }
       add(el('rect', { x: b.x, y: b.y, width: b.w, height: b.h, fill: '#55673f', opacity: 0.6, rx: 4 }));
+      drawFenceRect(grp, { x: b.x - 3, y: b.y - 2, w: b.w + 6, h: b.h + 4 }, { gate: 'left' });
       const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
       add(el('ellipse', { cx: cx + 3, cy: cy + 16, rx: 16, ry: 5, fill: 'rgba(0,0,0,0.25)' }));          // 그늘
       add(el('rect', { x: cx - 3, y: cy + 2, width: 6, height: 14, fill: '#6e5138', stroke: '#4e3a28' })); // 줄기
@@ -386,6 +552,8 @@ function nightOverlayOpacity() {
 function updateNight() {
   mapLayers.night.setAttribute('opacity', nightOverlayOpacity());
   document.body.classList.toggle('night', isNightNow());
+  const h = new Date().getHours();
+  document.body.classList.toggle('day', h >= 8 && h < 18); // 빨래는 낮에만
 }
 
 /* ---------- 지도 구축 ---------- */
@@ -400,13 +568,63 @@ function buildMap() {
   // 언덕 단차 표현
   zones.appendChild(el('path', { d: 'M 620 0 L 620 300 L 640 300 Q 660 260 655 200 Q 650 120 668 60 L 668 0 Z', fill: 'rgba(0,0,0,0.12)' }));
   drawSea(zones);
+  drawGroundDetail(zones);
   for (const z of ZONES) if (z.label) zones.appendChild(el('text', { x: z.lx, y: z.ly, class: 'zone-label' }, z.label));
   drawTerrain(terrain);
+  drawProps(terrain);
   for (const b of BUILDINGS) drawBuilding(blds, b);
+  const critterLayer = el('g');
+  drawGulls(blds);
   weatherLayer = el('g', { 'pointer-events': 'none' });
   const night = el('rect', { x: 0, y: 0, width: 1000, height: 640, fill: '#0a1030', opacity: 0, 'pointer-events': 'none' });
-  svg.append(zones, terrain, blds, chars, night, weatherLayer, fx);
-  mapLayers = { zones, terrain, blds, chars, night, fx };
+  svg.append(zones, terrain, blds, critterLayer, chars, night, weatherLayer, fx);
+  mapLayers = { zones, terrain, blds, critterLayer, chars, night, fx };
+  spawnCritters();
+}
+
+/* ---------- 앰비언트 동물 (연출 전용 — 세계 데이터 아님) ---------- */
+const critters = [];
+function makeGoat() {
+  const g = el('g');
+  const tone = rng() < 0.5 ? '#d8d3c8' : '#b8a998';
+  g.appendChild(el('ellipse', { cx: 0, cy: -4, rx: 6, ry: 3.6, fill: tone, stroke: 'rgba(0,0,0,0.25)' }));
+  g.appendChild(el('line', { x1: -4, y1: -1, x2: -4, y2: 0.5, stroke: '#6b6155', 'stroke-width': 1.4 }));
+  g.appendChild(el('line', { x1: 4, y1: -1, x2: 4, y2: 0.5, stroke: '#6b6155', 'stroke-width': 1.4 }));
+  g.appendChild(el('circle', { cx: 6.5, cy: -6.5, r: 2.4, fill: tone, stroke: 'rgba(0,0,0,0.25)' }));
+  g.appendChild(el('line', { x1: 7.5, y1: -8.5, x2: 9, y2: -10, stroke: '#8a7a5a', 'stroke-width': 1.2 }));
+  return g;
+}
+function makeChicken() {
+  const g = el('g');
+  g.appendChild(el('ellipse', { cx: 0, cy: -2.5, rx: 3.4, ry: 2.6, fill: '#ece6d8', stroke: 'rgba(0,0,0,0.25)' }));
+  g.appendChild(el('circle', { cx: 3, cy: -5, r: 1.7, fill: '#ece6d8' }));
+  g.appendChild(el('circle', { cx: 3.4, cy: -6.4, r: 0.8, fill: '#c0392b' }));
+  g.appendChild(el('path', { d: 'M 4.6 -5 l 1.6 0.5 l -1.6 0.7 Z', fill: '#d9a441' }));
+  return g;
+}
+function spawnCritters() {
+  critters.length = 0;
+  const spawn = (maker, bounds, n, speed) => {
+    for (let i = 0; i < n; i++) {
+      const g = maker();
+      mapLayers.critterLayer.appendChild(g);
+      const x = bounds.x + 8 + rng() * (bounds.w - 16), y = bounds.y + 10 + rng() * (bounds.h - 12);
+      critters.push({ g, x, y, tx: x, ty: y, bounds, speed, pauseUntil: 0, flip: false });
+    }
+  };
+  spawn(makeGoat, PASTURE, 3, 7);
+  spawn(makeChicken, GARDEN, 4, 9);
+}
+function critterTick() {
+  for (const c of critters) {
+    if (Date.now() < c.pauseUntil || Math.hypot(c.tx - c.x, c.ty - c.y) > 2) continue;
+    if (Math.random() < 0.4) {
+      c.tx = c.bounds.x + 8 + Math.random() * (c.bounds.w - 16);
+      c.ty = c.bounds.y + 10 + Math.random() * (c.bounds.h - 12);
+      c.flip = c.tx < c.x;
+    }
+    c.pauseUntil = Date.now() + 2500 + Math.random() * 8000;
+  }
 }
 
 /* ---------- 앰비언트 루틴 ---------- */
@@ -446,32 +664,58 @@ function ensureActors() {
     if (c.status !== 'alive') { if (actors.has(c.id)) { actors.get(c.id).g.remove(); actors.delete(c.id); } continue; }
     if (actors.has(c.id)) continue;
     const { g, img, sp } = makeActorSvg(c.id, c.name, 'char-label');
-    const sleep = el('text', { y: -sp.h - 4, class: 'sleep-mark' }, '💤'); sleep.style.display = 'none';
-    g.appendChild(sleep);
     g.addEventListener('click', () => showCharCard(c.id));
     mapLayers.chars.appendChild(g);
     const start = randIn(placeOf(homePlaceOf(c.id)));
-    actors.set(c.id, { x: start.x, y: start.y, tx: start.x, ty: start.y, g, img, sp, sleepEl: sleep, dir: 'down', frame: 0, pauseUntil: 0, staged: false });
+    actors.set(c.id, { x: start.x, y: start.y, tx: start.x, ty: start.y, g, img, sp, dir: 'down', frame: 0, pauseUntil: 0, staged: false, phase: 'awake' });
   }
+}
+
+/* 취침: 문으로 걸어가 실내로 사라지고 지붕 위 💤. 기상: 문에서 나온다 (WO-013) */
+const sleepMarks = new Map(); // actorId → svg text
+function addSleepMark(id) {
+  if (sleepMarks.has(id)) return;
+  const b = placeOf(homePlaceOf(id));
+  const idx = [...sleepMarks.values()].filter((m) => m.dataset.slug === b.slug).length;
+  const t = el('text', { x: b.x + b.w / 2 - 8 + idx * 16, y: b.y + 14, class: 'sleep-mark' }, '💤');
+  t.dataset.slug = b.slug;
+  mapLayers.fx.appendChild(t);
+  sleepMarks.set(id, t);
+}
+function removeSleepMark(id) { sleepMarks.get(id)?.remove(); sleepMarks.delete(id); }
+function wakeActor(id, a) {
+  removeSleepMark(id);
+  const door = doorPoint(homePlaceOf(id));
+  a.x = door.x; a.y = door.y; a.tx = door.x; a.ty = door.y + 8;
+  a.g.style.display = '';
+  a.phase = 'awake';
 }
 function routineTick() {
   if (!SNAP || !ROUTINES) return;
   for (const [id, a] of actors) {
     if (a.staged) continue;
     const block = scheduleBlockFor(id);
-    const asleep = !block;
-    a.sleepEl.style.display = asleep ? '' : 'none';
-    a.g.style.opacity = asleep ? 0.55 : 1;
-    const targetPlace = block ? block.place : homePlaceOf(id);
-    const b = placeOf(targetPlace);
+    if (!block) { // 취침 시간
+      if (a.phase === 'inside') continue;
+      const door = doorPoint(homePlaceOf(id));
+      if (a.phase !== 'toDoor') { a.phase = 'toDoor'; a.tx = door.x; a.ty = door.y; }
+      else if (Math.hypot(a.x - door.x, a.y - door.y) < 7) {
+        a.phase = 'inside'; a.g.style.display = 'none'; addSleepMark(id);
+      }
+      continue;
+    }
+    if (a.phase === 'inside') wakeActor(id, a);
+    a.phase = 'awake';
+    const b = placeOf(block.place);
     const inPlace = a.tx >= b.x - 12 && a.tx <= b.x + b.w + 12 && a.ty >= b.y - 12 && a.ty <= b.y + b.h + 30;
     if (!inPlace) {
       const p = randIn(b); a.tx = p.x; a.ty = p.y;
-    } else if (!asleep && Date.now() > a.pauseUntil && Math.hypot(a.tx - a.x, a.ty - a.y) < 2) {
+    } else if (Date.now() > a.pauseUntil && Math.hypot(a.tx - a.x, a.ty - a.y) < 2) {
       if (Math.random() < 0.3) { const p = randIn(b); a.tx = p.x; a.ty = p.y; }
       a.pauseUntil = Date.now() + 3000 + Math.random() * 9000;
     }
   }
+  critterTick();
 }
 
 /* ---------- 이동·스프라이트 애니메이션 (rAF 절제) ---------- */
@@ -497,6 +741,14 @@ function frame(t) {
   };
   for (const a of actors.values()) step(a);
   for (const a of anonActors.values()) step(a);
+  for (const c of critters) {
+    const dx = c.tx - c.x, dy = c.ty - c.y, dist = Math.hypot(dx, dy);
+    if (dist > 1) {
+      const mv = Math.min(dist, c.speed * dt);
+      c.x += (dx / dist) * mv; c.y += (dy / dist) * mv;
+    }
+    c.g.setAttribute('transform', `translate(${c.x.toFixed(1)}, ${c.y.toFixed(1)})${c.flip ? ' scale(-1,1)' : ''}`);
+  }
 }
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { if (rafId) cancelAnimationFrame(rafId); rafId = null; document.body.classList.add('anim-paused'); }
@@ -541,6 +793,7 @@ async function playEvent(entry) {
   try {
     for (const s of entry.staging ?? []) {
       const a = actorFor(s.actor);
+      if (a.phase === 'inside') wakeActor(s.actor, a); // 사건이 잠을 깨운다
       a.staged = true; a.fast = true;
       const p = randIn(placeOf(s.move_to));
       a.tx = p.x; a.ty = p.y;
@@ -752,6 +1005,22 @@ function connectStream() {
   es.addEventListener('update', () => fetchAll(false).catch(() => {}));
 }
 
+/* ---------- 소리 연동 (WO-013) ---------- */
+function rohanHammering() {
+  const b = scheduleBlockFor('rohan-the-smith');
+  return !!b && b.place === 'smithy' && /화덕|벼리|작업/.test(b.activity ?? '');
+}
+function setupAudio() {
+  const muteBtn = $('#mute-btn'), vol = $('#vol-slider');
+  vol.value = AudioEngine.volume;
+  const paint = () => { muteBtn.textContent = AudioEngine.muted ? '🔇' : '🔊'; };
+  paint();
+  muteBtn.addEventListener('click', () => { AudioEngine.setMuted(!AudioEngine.muted); paint(); });
+  vol.addEventListener('input', () => AudioEngine.setVolume(Number(vol.value)));
+  document.addEventListener('pointerdown', () => AudioEngine.start(), { once: true });
+  setInterval(() => AudioEngine.update({ night: isNightNow(), weather: currentWeather(), hammer: rohanHammering() }), 2000);
+}
+
 /* ---------- 부팅 ---------- */
 (async function boot() {
   buildSprites();
@@ -761,6 +1030,7 @@ function connectStream() {
   connectStream();
   updateNight();
   routineTick();
+  setupAudio();
   setInterval(renderTopbar, 1000);
   setInterval(updateNight, 30000);
   setInterval(routineTick, 2000);

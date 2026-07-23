@@ -27,6 +27,14 @@ body {
 .next-event.generating { color: var(--accent); }
 .next-event.dead { color: var(--danger); }
 
+/* 오디오 컨트롤 */
+#audio-ctl { display: flex; align-items: center; gap: 8px; }
+#audio-hint { font-size: 11px; color: var(--accent); animation: hint-blink 2.2s ease-in-out infinite; }
+body.audio-on #audio-hint { display: none; }
+@keyframes hint-blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+#mute-btn { background: none; border: 0; font-size: 15px; cursor: pointer; padding: 2px; }
+#vol-slider { width: 72px; accent-color: var(--accent); }
+
 /* ---------- 레이아웃 ---------- */
 main { flex: 1 1 auto; display: flex; min-height: 0; }
 #map-pane { flex: 1 1 auto; position: relative; background: #10131a; min-width: 0; }
@@ -153,9 +161,18 @@ body.night .lantern-glow { opacity: 0.16; }
 #map.w-fog { filter: saturate(0.55); }
 #map.w-overcast { filter: saturate(0.8) brightness(0.94); }
 
+/* 갈매기 선회 (부두 위) */
+.gull-orbit { animation: orbit linear infinite; }
+@keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* 빨래는 낮에만 */
+.laundry { opacity: 0; transition: opacity 2s; }
+body.day .laundry { opacity: 1; }
+
 /* 성능: 탭 비활성 시 애니메이션 정지 */
 body.anim-paused .smoke, body.anim-paused .wave, body.anim-paused .tree-sway,
-body.anim-paused .raindrop, body.anim-paused .flake, body.anim-paused .wind-line { animation-play-state: paused; }
+body.anim-paused .raindrop, body.anim-paused .flake, body.anim-paused .wind-line,
+body.anim-paused .gull-orbit { animation-play-state: paused; }
 .speech {
   font-size: 12px; line-height: 1.4;
 }

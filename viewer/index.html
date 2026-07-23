@@ -17,6 +17,11 @@
     <span id="weather">맑음</span>
   </div>
   <div id="next-event" class="next-event">러너 상태 확인 중…</div>
+  <div id="audio-ctl">
+    <span id="audio-hint">클릭하면 소리가 켜집니다</span>
+    <button id="mute-btn" title="음소거">🔊</button>
+    <input type="range" id="vol-slider" min="0" max="1" step="0.05" title="볼륨">
+  </div>
 </header>
 
 <main>
@@ -53,6 +58,7 @@
   <div id="modal"></div>
 </div>
 
+<script src="audio.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
