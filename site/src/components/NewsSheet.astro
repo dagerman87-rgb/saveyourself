@@ -1,0 +1,58 @@
+---
+import { newsSections } from '../lib/render.js';
+const { issue } = Astro.props; // { cycle, body }
+const sections = newsSections(issue.body);
+const [masthead, ...rest] = sections;
+---
+
+<article class="news">
+  <div class="news-masthead" set:html={masthead.html} />
+  {rest.map((s) => {
+    const kind = s.heading?.includes('1면') ? 'front'
+      : s.heading?.includes('단신') ? 'briefs'
+      : s.heading?.includes('떠도는') ? 'rumors'
+      : s.heading?.includes('부고') ? 'obituary'
+      : s.heading?.includes('날씨') ? 'weather' : 'etc';
+    return <section class={`news-sec ${kind}`} set:html={s.html} />;
+  })}
+</article>
+
+<style>
+  .news {
+    background: var(--sheet); border: 1px solid var(--rule);
+    box-shadow: 0 1px 0 rgba(42, 33, 24, 0.08), 0 6px 18px rgba(42, 33, 24, 0.07);
+    padding: 1.6rem 1.4rem 2rem;
+  }
+  .news :global(h1) { font-size: 1.9rem; line-height: 1.2; letter-spacing: -0.01em; }
+  .news-masthead { border-bottom: 4px double var(--ink); padding-bottom: 0.9rem; }
+  .news-masthead :global(p) { font-size: 0.85rem; color: var(--ink-faded); }
+  .news-masthead :global(blockquote) {
+    margin-top: 0.8rem; padding: 0.5rem 0.9rem; border-left: 3px solid var(--seal);
+    font-size: 0.9rem; background: rgba(153, 54, 31, 0.05);
+  }
+
+  .news-sec { padding: 1.1rem 0 1.2rem; border-bottom: 1px solid var(--rule); }
+  .news-sec:last-child { border-bottom: none; }
+  .news-sec :global(h2) {
+    font-size: 1.05rem; letter-spacing: 0.06em; margin-bottom: 0.6rem;
+    border-bottom: 2px solid var(--ink); display: inline-block; padding-bottom: 0.1rem;
+  }
+  .news-sec :global(p) { font-size: 0.94rem; margin-bottom: 0.55rem; }
+  .news-sec :global(ul) { padding-left: 1.1rem; font-size: 0.94rem; }
+  .news-sec :global(li) { margin-bottom: 0.55rem; }
+
+  .front :global(h2) { font-size: 1.5rem; border-bottom-width: 3px; }
+  .front :global(p:first-of-type) { font-size: 1rem; }
+
+  .briefs :global(p) { break-inside: avoid; }
+  @media (min-width: 720px) {
+    .briefs { column-count: 2; column-gap: 2rem; column-rule: 1px solid var(--rule); }
+    .briefs :global(h2) { column-span: all; }
+  }
+
+  .rumors { background: rgba(42, 33, 24, 0.035); margin: 0 -0.6rem; padding: 1.1rem 0.6rem 1.2rem; }
+  .rumors :global(h2) { color: var(--seal); border-bottom-color: var(--seal); }
+
+  .weather { font-style: normal; }
+  .weather :global(h2)::before { content: '☾ '; }
+</style>

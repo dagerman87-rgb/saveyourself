@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadProclaimedOracles } from '../lib/data.js';
+
+const oracles = loadProclaimedOracles();
+---
+
+<Base title="신탁의 기록" active="oracles">
+  <p class="kicker">신전이 공표한 것</p>
+  <h1 class="page-title">신탁의 기록</h1>
+  <p class="page-note">공표된 신탁만 이곳에 남는다. 공표되지 않은 신의 뜻이 있는지는 아무도 모른다.</p>
+  {oracles.length === 0 && <p>아직 공표된 신탁이 없다.</p>}
+  <ol class="oracles">
+    {oracles.map((o, i) => (
+      <li class="sheet oracle">
+        <p class="ord">제{i + 1}신탁 · 기록력 1년 {o.cycle}주 공표</p>
+        <blockquote>{o.decree}</blockquote>
+      </li>
+    ))}
+  </ol>
+</Base>
+
+<style>
+  .oracles { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+  .oracle { text-align: center; padding: 2.4rem 1.5rem; }
+  .ord { font-size: 0.8rem; letter-spacing: 0.25em; color: var(--seal); margin-bottom: 1rem; }
+  .oracle blockquote { font-size: 1.35rem; line-height: 1.9; }
+  .oracle blockquote::before { content: '“'; color: var(--seal); }
+  .oracle blockquote::after { content: '”'; color: var(--seal); }
+</style>

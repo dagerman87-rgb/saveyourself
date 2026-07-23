@@ -1,0 +1,38 @@
+---
+import Base from '../../layouts/Base.astro';
+import NewsSheet from '../../components/NewsSheet.astro';
+import WeekNav from '../../components/WeekNav.astro';
+import { loadNews, latestCycle } from '../../lib/data.js';
+
+export function getStaticPaths() {
+  const max = latestCycle();
+  return Array.from({ length: max }, (_, i) => ({ params: { cycle: String(i + 1) } }));
+}
+
+const cycle = Number(Astro.params.cycle);
+const issue = loadNews().find((n) => n.cycle === cycle);
+const max = latestCycle();
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+---
+
+<Base title={`${cycle}주의 소식`} active="news">
+  <p class="kicker">기록력 1년 {cycle}주</p>
+  <WeekNav current={cycle} max={max} />
+  {issue ? (
+    <NewsSheet issue={issue} />
+  ) : (
+    <div class="sheet silent">
+      <p class="big">이 주에는 소식지가 없었다.</p>
+      <p>'부두 소식'은 기록력 1년 6주에 창간되었다. 그 전의 일은 연대기만 남아 있다.</p>
+      <p><a href={`${base}chronicle/${cycle}/`}>→ 기록력 1년 {cycle}주의 연대기 읽기</a></p>
+    </div>
+  )}
+</Base>
+
+<style>
+  .silent { text-align: center; padding: 3.5rem 1.5rem; color: var(--ink-faded); }
+  .silent .big { font-size: 1.25rem; color: var(--ink); margin-bottom: 0.6rem; }
+  .silent a { color: var(--seal); }
+</style>

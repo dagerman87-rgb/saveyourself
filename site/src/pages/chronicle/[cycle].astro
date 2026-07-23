@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadChronicles } from '../../lib/data.js';
+import { md } from '../../lib/render.js';
+
+export function getStaticPaths() {
+  return loadChronicles().map((c) => ({ params: { cycle: String(c.cycle) } }));
+}
+
+const cycle = Number(Astro.params.cycle);
+const chronicles = loadChronicles();
+const doc = chronicles.find((c) => c.cycle === cycle);
+const idx = chronicles.indexOf(doc);
+const prev = chronicles[idx - 1];
+const next = chronicles[idx + 1];
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+---
+
+<Base title={doc.title} active="chronicle">
+  <article class="scroll sheet">
+    <p class="kicker">신전 기록실</p>
+    <div class="body" set:html={md(doc.body)} />
+  </article>
+  <nav class="pager">
+    <span>{prev && <a href={`${base}chronicle/${prev.cycle}/`}>← {prev.cycle}주</a>}</span>
+    <a href={`${base}chronicle/`}>전체 연대기</a>
+    <span>{next && <a href={`${base}chronicle/${next.cycle}/`}>{next.cycle}주 →</a>}</span>
+  </nav>
+</Base>
+
+<style>
+  .scroll { max-width: 42rem; margin: 0 auto; padding: 3rem 2.2rem 3.4rem; }
+  .body :global(h1) { font-size: 1.45rem; text-align: center; margin-bottom: 2rem; font-weight: 600; }
+  .body :global(h2) {
+    font-size: 1.02rem; font-weight: 600; margin: 2.1rem 0 0.7rem;
+    color: var(--seal); letter-spacing: 0.04em;
+  }
+  .body :global(p) { margin-bottom: 1rem; text-align: justify; }
+  .body :global(blockquote) { border-left: 2px solid var(--rule); padding-left: 1rem; color: var(--ink-faded); }
+  .pager {
+    max-width: 42rem; margin: 1rem auto 0; display: flex;
+    justify-content: space-between; font-size: 0.9rem;
+  }
+  .pager a { color: var(--ink-faded); text-decoration: none; }
+  .pager a:hover { color: var(--seal); }
+  @media (max-width: 640px) { .scroll { padding: 1.8rem 1.1rem 2.2rem; } }
+</style>

@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadChronicles } from '../../lib/data.js';
+
+const chronicles = loadChronicles();
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+---
+
+<Base title="연대기" active="chronicle">
+  <p class="kicker">공식 기록</p>
+  <h1 class="page-title">미르한 연대기</h1>
+  <p class="page-note">신전 기록실의 명의로 남는 공식 기록이다. 기록실이 적지 않은 것은 이곳에 없다.</p>
+  <ol class="list">
+    {chronicles.map((c) => (
+      <li>
+        <a href={`${base}chronicle/${c.cycle}/`}>
+          <span class="week">{c.cycle}주</span>
+          <span class="title">{c.title.replace(/^미르한 연대기\s*—\s*/, '')}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</Base>
+
+<style>
+  .list { list-style: none; }
+  .list li { border-bottom: 1px solid var(--rule); }
+  .list a {
+    display: flex; gap: 1.2rem; align-items: baseline;
+    padding: 0.85rem 0.3rem; text-decoration: none;
+  }
+  .list a:hover .title { color: var(--seal); }
+  .week { font-size: 0.85rem; color: var(--seal); min-width: 3rem; }
+  .title { font-size: 1.05rem; }
+</style>

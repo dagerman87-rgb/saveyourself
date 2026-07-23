@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadDistricts } from '../lib/data.js';
+
+const { districts } = loadDistricts();
+---
+
+<Base title="지도" active="map">
+  <p class="kicker">도시의 생김새</p>
+  <h1 class="page-title">미르한 지도</h1>
+  <p class="page-note">지도는 측량 중이다. 측량사가 언덕에서 내려오면 그림이 걸릴 것이다.</p>
+  <div class="districts">
+    {districts.map((d) => (
+      <article class="sheet district">
+        <h2>{d.name}</h2>
+        <p>{d.description}</p>
+      </article>
+    ))}
+  </div>
+</Base>
+
+<style>
+  .districts { display: grid; gap: 1rem; }
+  .district h2 { font-size: 1.15rem; color: var(--seal); margin-bottom: 0.4rem; }
+  .district p { font-size: 0.95rem; }
+  @media (min-width: 720px) { .districts { grid-template-columns: repeat(3, 1fr); } }
+</style>

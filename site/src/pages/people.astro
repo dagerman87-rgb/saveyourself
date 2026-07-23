@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadCharacters, loadDistricts, appearancesOf } from '../lib/data.js';
+
+const { districts } = loadDistricts();
+const districtName = (id) => districts.find((d) => d.id === id)?.name ?? id;
+const people = loadCharacters().map((c) => ({ ...c, appearances: appearancesOf(c.name) }));
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+---
+
+<Base title="인물 도감" active="people">
+  <p class="kicker">기록에 남은 사람들</p>
+  <h1 class="page-title">인물 도감</h1>
+  <p class="page-note">여기 적힌 것은 연대기와 소식지에 실린 만큼이다. 사람은 기록보다 크다.</p>
+  <div class="grid">
+    {people.map((p) => (
+      <article class={`card ${p.status !== 'alive' ? 'dead' : ''}`}>
+        <header>
+          <h2>{p.name}</h2>
+          <p class="meta">
+            {p.role} · {districtName(p.district)}
+            {p.status !== 'alive' && <strong class="rip"> † 고인</strong>}
+          </p>
+        </header>
+        <p class="intro">{p.public?.intro}</p>
+        {p.public?.known_details?.length > 0 && (
+          <ul class="details">
+            {p.public.known_details.map((d) => <li>{d}</li>)}
+          </ul>
+        )}
+        {p.appearances.length > 0 && (
+          <p class="appears">
+            등장:
+            {p.appearances.map((a) => (
+              <a href={`${base}${a.kind === 'chronicle' ? 'chronicle' : 'news'}/${a.cycle}/`}>
+                {a.kind === 'chronicle' ? `연대기 ${a.cycle}주` : `소식지 ${a.cycle}주`}
+              </a>
+            ))}
+          </p>
+        )}
+      </article>
+    ))}
+  </div>
+</Base>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1rem; }
+  .card {
+    background: var(--sheet); border: 1px solid var(--rule); padding: 1.2rem 1.1rem;
+    box-shadow: 0 1px 0 rgba(42, 33, 24, 0.08), 0 4px 12px rgba(42, 33, 24, 0.06);
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+  .card h2 { font-size: 1.25rem; display: inline; }
+  .card .meta { font-size: 0.82rem; color: var(--ink-faded); }
+  .card.dead { filter: grayscale(0.4); background: #eee7d6; }
+  .rip { color: var(--seal); }
+  .intro { font-size: 0.93rem; }
+  .details { list-style: none; font-size: 0.85rem; color: var(--ink-faded); }
+  .details li { padding-left: 0.9rem; position: relative; margin-bottom: 0.35rem; }
+  .details li::before { content: '—'; position: absolute; left: 0; color: var(--seal); }
+  .appears { font-size: 0.8rem; color: var(--ink-faded); margin-top: auto; padding-top: 0.4rem; border-top: 1px dashed var(--rule); }
+  .appears a { margin-left: 0.45rem; color: var(--seal); text-decoration: none; }
+  .appears a:hover { text-decoration: underline; }
+</style>

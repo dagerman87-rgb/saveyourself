@@ -1,0 +1,100 @@
+---
+const { title = '미르한', active = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+const nav = [
+  { href: '', key: 'news', label: '오늘의 소식' },
+  { href: 'chronicle/', key: 'chronicle', label: '연대기' },
+  { href: 'people/', key: 'people', label: '인물 도감' },
+  { href: 'oracles/', key: 'oracles', label: '신탁의 기록' },
+  { href: 'map/', key: 'map', label: '지도' },
+];
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — 미르한</title>
+    <meta name="description" content="바다가 하룻밤에 물러나며 자리를 내준 도시, 미르한의 기록" />
+  </head>
+  <body>
+    <header class="masthead">
+      <a class="city" href={base}>미르한</a>
+      <p class="epigraph">바다가 하룻밤에 물러나며 도시 자리를 내주었다 — 언젠가 되찾으러 온다는 약속과 함께</p>
+      <nav>
+        {nav.map((n) => (
+          <a href={base + n.href} class={active === n.key ? 'on' : ''}>{n.label}</a>
+        ))}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>이 도시에 대해 독자가 아는 것은 기록이 전부다. 기록은 틀릴 수 있다.</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --paper: #ece3cd;
+    --sheet: #f6efdd;
+    --ink: #2a2118;
+    --ink-faded: #6f5f49;
+    --seal: #99361f;
+    --rule: #c9bb9c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    font-family: 'Noto Serif KR', 'Nanum Myeongjo', 'Batang', 'Georgia', serif;
+    color: var(--ink);
+    line-height: 1.75;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255, 252, 240, 0.5), transparent 70%),
+      var(--paper);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  main { flex: 1; width: 100%; max-width: 60rem; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  a { color: inherit; }
+
+  .masthead { text-align: center; padding: 2.2rem 1rem 0; border-bottom: 3px double var(--ink); }
+  .masthead .city {
+    font-size: 2.4rem; letter-spacing: 1.2rem; text-indent: 1.2rem;
+    font-weight: 700; text-decoration: none; display: inline-block;
+  }
+  .masthead .epigraph { font-size: 0.8rem; color: var(--ink-faded); margin: 0.3rem 0 1.2rem; }
+  .masthead nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 1.6rem; padding-bottom: 0.7rem; }
+  .masthead nav a { text-decoration: none; font-size: 0.95rem; padding: 0.1rem 0.2rem; color: var(--ink-faded); }
+  .masthead nav a.on { color: var(--seal); border-bottom: 2px solid var(--seal); }
+
+  footer {
+    border-top: 1px solid var(--rule); text-align: center;
+    font-size: 0.78rem; color: var(--ink-faded); padding: 1.2rem 1rem 2rem;
+  }
+
+  .sheet {
+    background: var(--sheet); border: 1px solid var(--rule);
+    box-shadow: 0 1px 0 rgba(42, 33, 24, 0.08), 0 6px 18px rgba(42, 33, 24, 0.07);
+    padding: 2rem 1.5rem;
+  }
+  .kicker {
+    font-size: 0.78rem; letter-spacing: 0.35em; color: var(--seal);
+    text-transform: uppercase; margin-bottom: 0.4rem;
+  }
+  .page-title { font-size: 1.6rem; margin-bottom: 0.4rem; }
+  .page-note { color: var(--ink-faded); font-size: 0.88rem; margin-bottom: 1.6rem; }
+
+  @media (max-width: 640px) {
+    .masthead .city { font-size: 1.7rem; letter-spacing: 0.7rem; text-indent: 0.7rem; }
+    .masthead nav { gap: 0 0.9rem; font-size: 0.9rem; }
+    main { padding: 1.2rem 0.7rem 3rem; }
+    .sheet { padding: 1.3rem 1rem; }
+  }
+</style>

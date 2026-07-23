@@ -1,0 +1,22 @@
+---
+const { current, max } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+const weeks = Array.from({ length: max }, (_, i) => i + 1);
+---
+
+<nav class="weeks" aria-label="주차 이동">
+  {weeks.map((w) => (
+    <a href={`${base}news/${w}/`} class={w === current ? 'on' : ''}>{w}주</a>
+  ))}
+</nav>
+
+<style>
+  .weeks { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.85rem; }
+  .weeks a {
+    text-decoration: none; padding: 0.1rem 0.55rem; border: 1px solid var(--rule);
+    background: var(--sheet); color: var(--ink-faded);
+  }
+  .weeks a.on { border-color: var(--seal); color: var(--seal); font-weight: 700; }
+</style>
