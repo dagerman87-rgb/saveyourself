@@ -11,7 +11,7 @@ const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8
 
 export function verifyWorld() {
   const errors = [];
-  let characters, places, factions, timeline, oracles, axes;
+  let characters, places, factions, timeline, oracles, axes, upcoming;
   try {
     characters = readJson('world/characters.json');
     places = readJson('world/places.json');
@@ -19,6 +19,7 @@ export function verifyWorld() {
     timeline = readJson('world/timeline.json');
     oracles = readJson('world/oracles.json');
     axes = readJson('world/axes.json');
+    upcoming = fs.existsSync(path.join(ROOT, 'world/upcoming.json')) ? readJson('world/upcoming.json') : [];
   } catch (e) {
     return [`JSON 파싱 실패: ${e.message}`];
   }
@@ -52,6 +53,11 @@ export function verifyWorld() {
   for (const ax of axes)
     for (const p of ax.parties ?? [])
       if (!knownIds.has(p)) errors.push(`axes ${ax.id}: party '${p}' 미등록`);
+  for (const u of upcoming) {
+    if (!u.id || !u.title || isNaN(new Date(u.due))) errors.push(`upcoming ${u.id ?? '(id 없음)'}: 구조 위반 (id/title/due)`);
+    if (!['pending', 'resolved'].includes(u.status)) errors.push(`upcoming ${u.id}: status '${u.status}' 무효`);
+    if (u.status === 'resolved' && !u.resolved_by) errors.push(`upcoming ${u.id}: resolved인데 resolved_by 없음`);
+  }
   void oracles;
   return errors;
 }

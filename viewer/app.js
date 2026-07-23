@@ -138,8 +138,41 @@ const placeOf = (slug) => BUILDINGS.find((b) => b.slug === (PLACE_ALIAS[slug] ??
 const randIn = (b) => ({ x: b.x + 10 + Math.random() * (b.w - 20), y: b.y + b.h + 10 + Math.random() * 16 });
 const doorPoint = (slug) => { const b = placeOf(slug); return { x: b.x + b.w / 2, y: b.y + b.h + 9 }; };
 
-/* 시드 난수 — 배치가 리로드마다 흔들리지 않게 */
-const rng = (() => { let s = 20260724; return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; })();
+/* 시드 난수 — 배치가 리로드마다 흔들리지 않게 (buildMap마다 리셋) */
+let _seed = 20260724;
+const rng = () => { _seed |= 0; _seed = _seed + 0x6D2B79F5 | 0; let t = Math.imul(_seed ^ _seed >>> 15, 1 | _seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const resetRng = () => { _seed = 20260724; };
+
+/* ---------- 계절 (clock.json 정본 — WO-014) ---------- */
+const SEASON_STYLE = {
+  '여름': {
+    zones: { fields: '#4d5a3c', hill: '#63604c', port: '#66594a', mudflat: '#77684e', sea: '#2b5d78' },
+    grassHill: '#42592f', grassField: '#4f6b39', flowers: ['#e8e3c8', '#d9b84a'], flowerRate: 0.18,
+    tree: ['#4e7038', '#557a3d', '#5f8a44', '#6b9a4e'], apples: true, snow: false, leaves: false,
+  },
+  '봄': {
+    zones: { fields: '#516d3e', hill: '#5f6a45', port: '#6a5d4a', mudflat: '#77684e', sea: '#2e6076' },
+    grassHill: '#4a6533', grassField: '#587a40', flowers: ['#e8c8d8', '#f0ede0', '#d9b84a'], flowerRate: 0.34,
+    tree: ['#5a7f42', '#628a47', '#6d984f', '#7aa85a'], apples: false, snow: false, leaves: false,
+  },
+  '가을': {
+    zones: { fields: '#5e5836', hill: '#655c40', port: '#6e6350', mudflat: '#75664a', sea: '#2c5468' },
+    grassHill: '#6a6238', grassField: '#7a7444', flowers: ['#c8a86a'], flowerRate: 0.08,
+    tree: ['#8a6a30', '#a5763a', '#b58442', '#c09a50'], apples: true, snow: false, leaves: true,
+  },
+  '겨울': {
+    zones: { fields: '#5d635f', hill: '#666c68', port: '#6c6a60', mudflat: '#716a58', sea: '#46525c' },
+    grassHill: '#565e50', grassField: '#5a6152', flowers: [], flowerRate: 0,
+    tree: ['#6a6f66', '#747a70', '#7e857a', '#8a9184'], apples: false, snow: true, leaves: false,
+  },
+};
+let seasonOverride = new URLSearchParams(location.search).get('season');
+function seasonNow() {
+  if (seasonOverride && SEASON_STYLE[seasonOverride]) return seasonOverride;
+  const m = String(new Date().getMonth() + 1);
+  return SNAP?.clock?.seasons?.[m] ?? '여름';
+}
+const seasonStyle = () => SEASON_STYLE[seasonNow()] ?? SEASON_STYLE['여름'];
 
 /* ---------- 환경 디테일 (WO-013 — 연출 계층, 세계 데이터 아님) ---------- */
 const PASTURE = { x: 630, y: 262, w: 82, h: 34 };   // 구시가 비탈 목장
@@ -182,15 +215,15 @@ function drawPine(g, x, y, s = 1) {
   }
 }
 function drawGroundDetail(g) {
+  const st = seasonStyle();
   // 톤 변주 패치
   for (let i = 0; i < 26; i++) {
     const x = rng() * 1000, y = rng() * 510;
     const z = zoneAt(x, y);
     if (!z || !clearOfBuildings(x, y)) continue;
-    const col = { fields: '#46523a', hill: '#5a584a', port: '#6e6050', mudflat: '#6e5f48' }[z];
-    g.appendChild(el('ellipse', { cx: x, cy: y, rx: 24 + rng() * 34, ry: 12 + rng() * 16, fill: col, opacity: 0.35 }));
+    g.appendChild(el('ellipse', { cx: x, cy: y, rx: 24 + rng() * 34, ry: 12 + rng() * 16, fill: rng() < 0.6 ? '#000' : '#fff', opacity: rng() < 0.6 ? 0.07 : 0.045 }));
   }
-  // 풀포기·들꽃 (초원·언덕 위주, 항구는 성기게)
+  // 풀포기·들꽃 (계절 팔레트 — 초원·언덕 위주, 항구는 성기게)
   for (let i = 0; i < 150; i++) {
     const x = rng() * 1000, y = rng() * 512;
     const z = zoneAt(x, y);
@@ -200,11 +233,24 @@ function drawGroundDetail(g) {
       continue;
     }
     if (z === 'mudflat' && rng() < 0.5) continue;
-    const gc = z === 'hill' ? '#42592f' : '#4f6b39';
+    const gc = z === 'hill' ? st.grassHill : st.grassField;
     const t = el('g');
     for (const dx of [-2, 0, 2]) t.appendChild(el('line', { x1: x + dx, y1: y, x2: x + dx * 1.6, y2: y - 4 - rng() * 3, stroke: gc, 'stroke-width': 1.1 }));
     g.appendChild(t);
-    if (rng() < 0.18) g.appendChild(el('circle', { cx: x + 3, cy: y - 3, r: 1.4, fill: rng() < 0.5 ? '#e8e3c8' : '#d9b84a' }));
+    if (st.flowers.length && rng() < st.flowerRate)
+      g.appendChild(el('circle', { cx: x + 3, cy: y - 3, r: 1.4, fill: st.flowers[Math.floor(rng() * st.flowers.length)] }));
+  }
+  // 가을: 낙엽 점묘
+  if (st.leaves) for (let i = 0; i < 44; i++) {
+    const x = rng() * 1000, y = rng() * 512;
+    if (!zoneAt(x, y) || !clearOfBuildings(x, y)) continue;
+    g.appendChild(el('ellipse', { cx: x, cy: y, rx: 2, ry: 1.2, fill: rng() < 0.5 ? '#a5623a' : '#8a5a2e', opacity: 0.85, transform: `rotate(${Math.floor(rng() * 180)} ${x} ${y})` }));
+  }
+  // 겨울: 눈 쌓임
+  if (st.snow) for (let i = 0; i < 34; i++) {
+    const x = rng() * 1000, y = rng() * 512;
+    if (!zoneAt(x, y) || !clearOfBuildings(x, y)) continue;
+    g.appendChild(el('ellipse', { cx: x, cy: y, rx: 10 + rng() * 22, ry: 4 + rng() * 8, fill: '#e8ecf0', opacity: 0.5 + rng() * 0.3 }));
   }
   // 잡목·덤불
   for (let i = 0; i < 9; i++) {
@@ -353,13 +399,16 @@ function drawBuilding(g, b) {
       const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
       add(el('ellipse', { cx: cx + 3, cy: cy + 16, rx: 16, ry: 5, fill: 'rgba(0,0,0,0.25)' }));          // 그늘
       add(el('rect', { x: cx - 3, y: cy + 2, width: 6, height: 14, fill: '#6e5138', stroke: '#4e3a28' })); // 줄기
+      const ts = seasonStyle();
       const canopy = el('g', { class: 'tree-sway' });
-      canopy.appendChild(el('circle', { cx: cx - 9, cy: cy - 4, r: 11, fill: '#4e7038' }));
-      canopy.appendChild(el('circle', { cx: cx + 9, cy: cy - 4, r: 11, fill: '#557a3d' }));
-      canopy.appendChild(el('circle', { cx, cy: cy - 12, r: 12, fill: '#5f8a44' }));
-      canopy.appendChild(el('circle', { cx: cx - 4, cy: cy - 7, r: 8, fill: '#6b9a4e' }));
-      for (const [ax, ay] of [[-8, -10], [5, -14], [10, -3], [-2, -1], [3, -7]])
+      canopy.appendChild(el('circle', { cx: cx - 9, cy: cy - 4, r: 11, fill: ts.tree[0] }));
+      canopy.appendChild(el('circle', { cx: cx + 9, cy: cy - 4, r: 11, fill: ts.tree[1] }));
+      canopy.appendChild(el('circle', { cx, cy: cy - 12, r: 12, fill: ts.tree[2] }));
+      canopy.appendChild(el('circle', { cx: cx - 4, cy: cy - 7, r: 8, fill: ts.tree[3] }));
+      if (ts.apples) for (const [ax, ay] of [[-8, -10], [5, -14], [10, -3], [-2, -1], [3, -7]])
         canopy.appendChild(el('circle', { cx: cx + ax, cy: cy + ay, r: 1.8, fill: '#c8453a' }));          // 사과
+      if (seasonNow() === '봄') for (const [ax, ay] of [[-9, -8], [4, -13], [9, -4], [-3, -2], [2, -8], [-6, -14]])
+        canopy.appendChild(el('circle', { cx: cx + ax, cy: cy + ay, r: 1.5, fill: '#f0dce8' }));          // 꽃
       add(canopy);
       break;
     }
@@ -457,8 +506,9 @@ function drawTerrain(g) {
 }
 function drawSea(g) {
   const sea = ZONES.find((z) => z.id === 'sea');
-  g.appendChild(el('rect', { x: sea.x, y: sea.y, width: sea.w, height: sea.h, fill: sea.fill }));
-  g.appendChild(el('rect', { x: sea.x, y: sea.y, width: sea.w, height: 6, fill: '#3d7492', opacity: 0.8 }));
+  const fill = seasonStyle().zones.sea;
+  g.appendChild(el('rect', { x: sea.x, y: sea.y, width: sea.w, height: sea.h, fill }));
+  g.appendChild(el('rect', { x: sea.x, y: sea.y, width: sea.w, height: 6, fill: '#ffffff', opacity: 0.14 }));
   for (let i = 0; i < 3; i++) {
     let d = `M -80 ${545 + i * 26}`;
     for (let x = -80; x < 1100; x += 40) d += ` q 10 -5 20 0 q 10 5 20 0`;
@@ -561,9 +611,11 @@ function buildMap() {
   const svg = $('#map');
   svg.innerHTML = '';
   const zones = el('g'), terrain = el('g'), blds = el('g'), chars = el('g'), fx = el('g');
+  resetRng();
+  const st = seasonStyle();
   for (const z of ZONES) {
     if (z.id === 'sea') continue;
-    zones.appendChild(el('rect', { x: z.x, y: z.y, width: z.w, height: z.h, fill: z.fill }));
+    zones.appendChild(el('rect', { x: z.x, y: z.y, width: z.w, height: z.h, fill: st.zones[z.id] ?? z.fill }));
   }
   // 언덕 단차 표현
   zones.appendChild(el('path', { d: 'M 620 0 L 620 300 L 640 300 Q 660 260 655 200 Q 650 120 668 60 L 668 0 Z', fill: 'rgba(0,0,0,0.12)' }));
@@ -581,6 +633,24 @@ function buildMap() {
   mapLayers = { zones, terrain, blds, critterLayer, chars, night, fx };
   spawnCritters();
 }
+
+/* 계절 전환·프리뷰: 지도 전체 재구축 (URL ?season=봄 또는 콘솔 setSeason('겨울')) */
+function rebuildWorldVisual() {
+  for (const a of actors.values()) a.g.remove();
+  actors.clear();
+  for (const t of sleepMarks.values()) t.remove();
+  sleepMarks.clear();
+  anonActors.clear();
+  buildMap();
+  if (SNAP) { ensureActors(); routineTick(); renderWeather(); }
+  updateNight();
+}
+window.setSeason = (s) => {
+  if (s !== null && !SEASON_STYLE[s]) return `무효 — ${Object.keys(SEASON_STYLE).join('|')} 또는 null(정본 복귀)`;
+  seasonOverride = s;
+  rebuildWorldVisual();
+  return `계절 프리뷰: ${seasonNow()}`;
+};
 
 /* ---------- 앰비언트 동물 (연출 전용 — 세계 데이터 아님) ---------- */
 const critters = [];
@@ -664,10 +734,13 @@ function ensureActors() {
     if (c.status !== 'alive') { if (actors.has(c.id)) { actors.get(c.id).g.remove(); actors.delete(c.id); } continue; }
     if (actors.has(c.id)) continue;
     const { g, img, sp } = makeActorSvg(c.id, c.name, 'char-label');
+    const starEl = el('text', { x: 14, y: 10, class: 'map-star' }, '★');
+    starEl.style.display = stars.has(c.id) ? '' : 'none';
+    g.appendChild(starEl);
     g.addEventListener('click', () => showCharCard(c.id));
     mapLayers.chars.appendChild(g);
     const start = randIn(placeOf(homePlaceOf(c.id)));
-    actors.set(c.id, { x: start.x, y: start.y, tx: start.x, ty: start.y, g, img, sp, dir: 'down', frame: 0, pauseUntil: 0, staged: false, phase: 'awake' });
+    actors.set(c.id, { x: start.x, y: start.y, tx: start.x, ty: start.y, g, img, sp, starEl, dir: 'down', frame: 0, pauseUntil: 0, staged: false, phase: 'awake' });
   }
 }
 
@@ -821,6 +894,77 @@ function enqueuePlayback(entry) {
   else playEvent(entry);
 }
 
+/* ---------- ★ 애착 등록 (WO-014 — 순수 뷰어 기능) ---------- */
+const stars = new Set(JSON.parse(localStorage.getItem('mirhan-stars') ?? '[]'));
+function toggleStar(id) {
+  if (stars.has(id)) stars.delete(id); else stars.add(id);
+  localStorage.setItem('mirhan-stars', JSON.stringify([...stars]));
+  renderLog(); renderCharStrip();
+  for (const [aid, a] of actors) if (a.starEl) a.starEl.style.display = stars.has(aid) ? '' : 'none';
+}
+function involvesStarred(e) {
+  return [...stars].some((id) =>
+    (e.affected ?? []).includes(id) ||
+    (e.dialogue ?? []).some((d) => d.speaker === id) ||
+    (e.staging ?? []).some((s) => s.actor === id));
+}
+let notifyOn = localStorage.getItem('mirhan-notify') === '1';
+function paintNotifyBtn() {
+  const b = $('#notify-btn');
+  b.textContent = notifyOn && Notification.permission === 'granted' ? '🔔' : '🔕';
+  b.title = notifyOn ? '★ 인물 알림 켜짐 — 클릭해 끄기' : '★ 인물 알림 꺼짐 — 클릭해 켜기';
+}
+async function toggleNotify() {
+  if (!notifyOn) {
+    if (!('Notification' in window)) return alert('이 브라우저는 알림을 지원하지 않는다.');
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { paintNotifyBtn(); return; }
+    notifyOn = true;
+  } else notifyOn = false;
+  localStorage.setItem('mirhan-notify', notifyOn ? '1' : '0');
+  paintNotifyBtn();
+}
+function notifyStarred(e) {
+  if (!notifyOn || Notification.permission !== 'granted' || !involvesStarred(e)) return;
+  try { new Notification('미르한 — ★', { body: e.log_line, tag: e.id }); } catch { /* noop */ }
+}
+
+/* ---------- 다가오는 일 (WO-014) ---------- */
+function countdownLabel(due) {
+  const ms = new Date(due) - Date.now();
+  if (ms <= 0) return '기한이 지났다 — 결과를 기다린다';
+  const d = Math.floor(ms / 86400000);
+  if (d >= 1) return `D-${d}`;
+  const h = Math.floor(ms / 3600000);
+  if (h >= 1) return `${h}시간 뒤`;
+  return `${Math.max(1, Math.floor(ms / 60000))}분 뒤`;
+}
+function renderUpcoming() {
+  const pane = $('#upcoming-pane'), list = $('#upcoming-list');
+  const ups = SNAP?.upcoming ?? [];
+  const pending = ups.filter((u) => u.status === 'pending').sort((a, b) => new Date(a.due) - new Date(b.due));
+  const recentResolved = ups.filter((u) => u.status === 'resolved' && u.resolved_ts && Date.now() - new Date(u.resolved_ts) < 48 * 3600000);
+  if (!pending.length && !recentResolved.length) { pane.classList.add('hidden'); return; }
+  pane.classList.remove('hidden');
+  list.innerHTML = '';
+  for (const u of pending) {
+    const overdue = new Date(u.due) <= Date.now();
+    const item = div(`up-item${overdue ? ' overdue' : ''}`);
+    item.innerHTML = `<span class="up-count">${esc(countdownLabel(u.due))}</span> <b>${esc(u.title)}</b>
+      ${u.note ? `<div class="small-muted">${esc(u.note)}</div>` : ''}`;
+    if (u.origin_event) item.addEventListener('click', () => { const e = LOG.find((x) => x.id === u.origin_event); if (e) showEventDetail(e); });
+    list.appendChild(item);
+  }
+  for (const u of recentResolved) {
+    const result = LOG.find((x) => x.id === u.resolved_by);
+    const item = div('up-item resolved');
+    item.innerHTML = `<span class="up-count">✓ ${esc(u.outcome ?? '해소')}</span> <b>${esc(u.title)}</b>
+      ${result ? `<div class="small-muted">${esc(result.log_line)}</div>` : ''}`;
+    if (result) item.addEventListener('click', () => showEventDetail(result));
+    list.appendChild(item);
+  }
+}
+
 /* ---------- 마을 로그 패널 ---------- */
 function renderLog() {
   const list = $('#log-list');
@@ -832,7 +976,7 @@ function renderLog() {
       if (sorted.indexOf(e) > 0) list.appendChild(div('new-divider', '여기까지 새 소식'));
       dividerDone = true;
     }
-    const item = div('log-item');
+    const item = div(`log-item${involvesStarred(e) ? ' starred' : ''}`);
     const t = new Date(e.ts);
     item.appendChild(div('meta',
       `<span class="grade-badge g${e.grade}">등급 ${e.grade}</span>` +
@@ -889,9 +1033,9 @@ function renderCharStrip() {
   for (const c of SNAP.characters) {
     const chip = div(`char-chip${c.status !== 'alive' ? ' dead' : ''}`);
     const sp = SPRITES[c.id];
-    chip.innerHTML = sp
+    chip.innerHTML = (sp
       ? `<img src="${sp.down[0]}" width="12" height="16" style="image-rendering:pixelated">${esc(c.name)}`
-      : esc(c.name);
+      : esc(c.name)) + (stars.has(c.id) ? ' <span class="chip-star">★</span>' : '');
     chip.addEventListener('click', () => showCharCard(c.id));
     strip.appendChild(chip);
   }
@@ -929,7 +1073,9 @@ function showCharCard(id) {
   const sp = SPRITES[id];
   card.innerHTML = `
     <div class="card-head">${sp ? `<img src="${sp.down[0]}" width="36" height="48" style="image-rendering:pixelated">` : ''}
-      <div><div class="card-name">${esc(c.name)} ${c.status !== 'alive' ? `<span class="status-badge">${esc(c.status)}</span>` : ''}</div>
+      <div><div class="card-name">${esc(c.name)}
+        <button class="star-btn ${stars.has(id) ? 'on' : ''}" id="star-toggle" title="애착 등록 — 로그 하이라이트·알림·지도 표식">★</button>
+        ${c.status !== 'alive' ? `<span class="status-badge">${esc(c.status)}</span>` : ''}</div>
       <div class="card-role">${esc(c.role)} · ${esc(district)}${c.origin_district ? ` (출신: ${esc(SNAP.places.districts.find((d) => d.id === c.origin_district)?.name ?? c.origin_district)})` : ''}</div>
       ${c.home ? `<div class="small-muted">집: ${esc(c.home.desc)}</div>` : ''}</div></div>
     <div class="small-muted">텐션 ${c.tension}</div>
@@ -945,6 +1091,7 @@ function showCharCard(id) {
     <div class="card-sec"><h3>관계</h3><ul>${rels || '<li class="small-muted">—</li>'}${incoming}</ul></div>
     <div class="card-sec"><h3>등장 이벤트</h3><ul>${appear || '<li class="small-muted">실시간 전환 후 아직 없음</li>'}</ul></div>
     <div class="card-sec"><h3>연대기 등장 (주간 truth)</h3><ul>${timelineAppear || '<li class="small-muted">—</li>'}</ul></div>`;
+  $('#star-toggle')?.addEventListener('click', () => { toggleStar(id); showCharCard(id); });
   card.querySelectorAll('[data-char]').forEach((n) => n.addEventListener('click', () => showCharCard(n.dataset.char)));
   card.querySelectorAll('[data-evt]').forEach((n) => n.addEventListener('click', () => {
     const e = LOG.find((x) => x.id === n.dataset.evt);
@@ -994,11 +1141,11 @@ async function fetchAll(initial = false) {
     localStorage.setItem('mirhan-last-seen', LOG.reduce((m, e) => (e.ts > m ? e.ts : m), lastSeenTs));
   } else if (LOG.length > prevCount) {
     const fresh = [...LOG].sort((a, b) => new Date(a.ts) - new Date(b.ts)).slice(prevCount);
-    for (const e of fresh) enqueuePlayback(e);
+    for (const e of fresh) { enqueuePlayback(e); notifyStarred(e); }
     localStorage.setItem('mirhan-last-seen', LOG.reduce((m, e) => (e.ts > m ? e.ts : m), lastSeenTs));
   }
   ensureActors();
-  renderLog(); renderOracles(); renderCharStrip(); renderTopbar(); renderWeather();
+  renderLog(); renderOracles(); renderCharStrip(); renderTopbar(); renderWeather(); renderUpcoming();
 }
 function connectStream() {
   const es = new EventSource('/api/stream');
@@ -1019,6 +1166,9 @@ function setupAudio() {
   vol.addEventListener('input', () => AudioEngine.setVolume(Number(vol.value)));
   document.addEventListener('pointerdown', () => AudioEngine.start(), { once: true });
   setInterval(() => AudioEngine.update({ night: isNightNow(), weather: currentWeather(), hammer: rohanHammering() }), 2000);
+  $('#notify-btn').addEventListener('click', toggleNotify);
+  paintNotifyBtn();
+  setInterval(renderUpcoming, 30000); // 카운트다운 갱신
 }
 
 /* ---------- 부팅 ---------- */

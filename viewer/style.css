@@ -56,6 +56,7 @@ main { flex: 1 1 auto; display: flex; min-height: 0; }
 .log-item .meta { font-size: 11px; color: var(--muted); display: flex; gap: 6px; margin-bottom: 2px; }
 .grade-badge { border-radius: 3px; padding: 0 5px; font-size: 10px; background: #3a4152; color: var(--text); }
 .grade-badge.g1 { background: #6b5b2a; } .grade-badge.g2 { background: #7a4a2a; } .grade-badge.g3 { background: #7a2a3d; }
+.log-item.starred { border-left: 3px solid var(--accent); padding-left: 6px; background: rgba(217, 164, 65, 0.05); }
 .new-divider {
   display: flex; align-items: center; gap: 8px; color: var(--accent);
   font-size: 11px; letter-spacing: 2px; margin: 6px 0;
@@ -95,6 +96,24 @@ main { flex: 1 1 auto; display: flex; min-height: 0; }
 .appear-item { cursor: pointer; }
 .appear-item:hover { color: var(--accent); }
 .small-muted { font-size: 11px; color: var(--muted); }
+
+/* ---------- 다가오는 일 (WO-014) ---------- */
+#upcoming-pane { flex: 0 0 auto; max-height: 140px; overflow-y: auto; border-bottom: 1px solid var(--line); }
+#upcoming-pane.hidden { display: none; }
+#upcoming-list { padding: 0 12px 8px; }
+.up-item { padding: 5px 0; font-size: 13px; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; }
+.up-item:hover { background: var(--panel2); }
+.up-count { color: var(--accent); font-weight: 700; font-size: 12px; margin-right: 4px; }
+.up-item.overdue .up-count { color: var(--danger); }
+.up-item.resolved { opacity: 0.65; }
+.up-item.resolved .up-count { color: #7fa07f; }
+
+/* ★ 애착 */
+.star-btn { background: none; border: 0; color: #555c6b; font-size: 15px; cursor: pointer; padding: 0 2px; vertical-align: 1px; }
+.star-btn.on { color: var(--accent); }
+.chip-star { color: var(--accent); font-size: 10px; }
+.map-star { font-size: 9px; fill: var(--accent); paint-order: stroke; stroke: rgba(0,0,0,0.6); stroke-width: 1.5px; }
+#notify-btn { background: none; border: 0; font-size: 14px; cursor: pointer; padding: 2px; }
 
 /* ---------- 신탁 패널 ---------- */
 #oracle-pane { flex: 0 0 auto; border-top: 1px solid var(--line); background: var(--panel2); }

@@ -19,6 +19,7 @@
   <div id="next-event" class="next-event">러너 상태 확인 중…</div>
   <div id="audio-ctl">
     <span id="audio-hint">클릭하면 소리가 켜집니다</span>
+    <button id="notify-btn" title="★ 인물 알림">🔕</button>
     <button id="mute-btn" title="음소거">🔊</button>
     <input type="range" id="vol-slider" min="0" max="1" step="0.05" title="볼륨">
   </div>
@@ -34,6 +35,11 @@
     <section id="log-pane">
       <h2>마을 로그</h2>
       <div id="log-list"></div>
+    </section>
+
+    <section id="upcoming-pane" class="hidden">
+      <h2>다가오는 일</h2>
+      <div id="upcoming-list"></div>
     </section>
 
     <section id="card-pane">

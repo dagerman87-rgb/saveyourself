@@ -49,6 +49,7 @@ function snapshot() {
     axes: readJson('world/axes.json'),
     timeline: readJson('world/timeline.json'),
     oracles: readJson('world/oracles.json'),
+    upcoming: fs.existsSync(path.join(ROOT, 'world/upcoming.json')) ? readJson('world/upcoming.json') : [],
     runner: runnerState(),
     server_now: new Date().toISOString(),
   };
@@ -85,6 +86,7 @@ const WATCH = [
   ['world/log.jsonl', 'log'],
   ['world/oracles.json', 'oracles'],
   ['world/characters.json', 'world'],
+  ['world/upcoming.json', 'upcoming'],
   ['engine/runner-state.json', 'runner'],
 ];
 for (const [rel, type] of WATCH) {
