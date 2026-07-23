@@ -1,5 +1,5 @@
 {
-  "_note": "앰비언트 루틴 (WO-011). AI 없이 뷰어가 이 일과표대로 인물을 움직인다. 세계 데이터가 아니라 연출 데이터 — world/와 무관하며 truth를 새로 만들지 않는다. 일과표 근거는 각 인물의 직업·quirks·최근 사건 (basis 필드). 일과표 밖 시간은 home에서 취침.",
+  "_note": "앰비언트 루틴 (WO-011, WO-012 개정). AI 없이 뷰어가 이 일과표대로 인물을 움직인다. 세계 데이터가 아니라 연출 데이터 — world/와 무관하며 truth를 새로 만들지 않는다. 일과표 근거는 각 인물의 직업·quirks·최근 사건 (basis 필드). 일과표 밖 시간은 home에서 취침. home 정본은 characters.json의 home 필드 (여기 home은 폴백). condition: \"weather:비\"는 해당 날씨일 때만, \"weather:!비\"는 아닐 때만 적용.",
   "characters": {
     "rohan-the-smith": {
       "color": "#c96342",
@@ -7,13 +7,14 @@
       "schedule": [
         { "from": "06:30", "to": "08:00", "place": "smithy", "activity": "화덕 불 올리기" },
         { "from": "08:00", "to": "12:00", "place": "smithy", "activity": "벼리기" },
-        { "from": "12:00", "to": "13:00", "place": "apple-yard", "activity": "사과나무 아래 점심" },
+        { "from": "12:00", "to": "13:00", "place": "apple-yard", "activity": "사과나무 아래 점심 (비 오는 날)", "condition": "weather:비" },
+        { "from": "12:00", "to": "13:00", "place": "smithy", "activity": "가게 안 점심", "condition": "weather:!비" },
         { "from": "13:00", "to": "17:30", "place": "smithy", "activity": "오후 작업" },
         { "from": "17:30", "to": "18:30", "place": "dock", "activity": "납품·바람 쐬기" },
         { "from": "18:30", "to": "20:00", "place": "market", "activity": "저녁 거리·소식 듣기" },
         { "from": "20:00", "to": "22:30", "place": "smithy", "activity": "가게 정리" }
       ],
-      "basis": "대장장이 — 대장간이 집이자 일터. 점심은 quirk '비 오는 날마다 아내가 심은 사과나무 아래서 점심'에서 — v1은 날씨 연동 없이 매일 사과나무 마당으로 단순화(뷰어 연출). 저녁 부두·시장 동선은 납품 일감(조합 낚싯바늘 등 log 근거)과 채무·평판 문제로 바깥 소식에 민감한 처지 반영."
+      "basis": "대장장이 — 대장간이 집이자 일터. 점심은 quirk '비 오는 날마다 아내가 심은 사과나무 아래서 점심' 그대로 — weather 진실화(WO-012)로 원래 조건 복원: 비 오는 날만 사과나무 마당, 아니면 가게 안. 저녁 부두·시장 동선은 납품 일감(조합 낚싯바늘 등 log 근거)과 채무·평판 문제로 바깥 소식에 민감한 처지 반영."
     },
     "mira-the-baker": {
       "color": "#d9a441",

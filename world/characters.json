@@ -5,6 +5,7 @@
     "role": "대장장이",
     "district": "port-district",
     "status": "alive",
+    "home": { "place": "smithy", "desc": "대장간 딸린 살림집" },
     "public": {
       "intro": "항구 구역의 대장장이.",
       "known_details": [
@@ -77,6 +78,7 @@
     "role": "빵집 주인",
     "district": "port-district",
     "status": "alive",
+    "home": { "place": "bakery", "desc": "빵집 이층 살림방" },
     "public": {
       "intro": "항구 구역의 빵집 주인. 실종된 동생이 있다.",
       "known_details": [
@@ -148,6 +150,7 @@
     "role": "늙은 어부",
     "district": "port-district",
     "status": "alive",
+    "home": { "place": "fisher-hut", "desc": "부두 곁 오두막" },
     "public": {
       "intro": "항구 구역의 늙은 어부.",
       "known_details": [
@@ -240,6 +243,7 @@
     "role": "신전 서기",
     "district": "hill-district",
     "status": "alive",
+    "home": { "place": "temple", "desc": "신전 기록실 곁방" },
     "public": {
       "intro": "언덕 구역, 신전 기록실의 서기. 공식 기록에 이름이 오른 적은 없다.",
       "known_details": []
@@ -290,6 +294,7 @@
     "district": "port-district",
     "origin_district": "mudflat-district",
     "status": "alive",
+    "home": { "place": "port-lane", "desc": "항구 골목 셋집" },
     "public": {
       "intro": "항구 구역의 시장 관리인. 갯벌 구역 출신이라는 사실이 5주 궤 열람 소동 때 알려졌다.",
       "known_details": [
@@ -355,6 +360,7 @@
     "role": "소금밭 아이",
     "district": "mudflat-district",
     "status": "alive",
+    "home": { "place": "bakery", "desc": "빵집 화덕 뒤 짚자리" },
     "public": {
       "intro": "갯벌 구역 소금밭의 아이. 6주부터 항구의 빵집에서 새벽 일꾼으로 일한다.",
       "known_details": [
