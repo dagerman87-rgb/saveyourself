@@ -1,46 +1,75 @@
-# 사이트 빌드·배포만 한다. 사이클 자동 실행은 WO-008.
-name: Deploy site
+# 분리 배포 (WO-008): 검증 게이트 통과 시 dist/만 <SITE_REPO>(public)의 gh-pages로 push.
+# 세계 저장소는 private 유지. SITE_REPO는 Actions 변수(vars.SITE_REPO, "owner/name" 형식),
+# SITE_DEPLOY_TOKEN은 해당 저장소 push 권한의 fine-grained PAT (Actions secret).
+name: Verify & deploy site
 
 on:
   push:
     branches: [master]
   workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+  workflow_call:
 
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  verify-build-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: master
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install and build
+
+      # ── 게이트 1: site/ 소스의 금지 필드 참조 (WO-007 데이터 접근 원칙) ──
+      - name: "Gate 1 - forbidden field grep"
+        run: |
+          if grep -rnE 'tension|truth|secret|desires|wish|scars|relationships' site/src; then
+            echo "::error::site/src에 금지 필드 참조 발견 - 배포 중단"
+            exit 1
+          fi
+          echo "금지 필드 참조 0건"
+
+      # ── 게이트 3: world/ JSON 파싱 + 참조 무결성 + 기록 계층 canary ──
+      - name: "Gate 3 - world integrity + record-layer canary"
+        run: node engine/verify-world.mjs --scan chronicle records
+
+      - name: Build site
         working-directory: site
         env:
-          BASE_PATH: /${{ github.event.repository.name }}/
-          SITE_URL: https://${{ github.repository_owner }}.github.io
+          SITE_REPO: ${{ vars.SITE_REPO }}
         run: |
+          if [ -z "$SITE_REPO" ]; then
+            echo "::error::Actions 변수 SITE_REPO(owner/name) 미설정"
+            exit 1
+          fi
+          export BASE_PATH="/${SITE_REPO##*/}/"
+          export SITE_URL="https://${SITE_REPO%%/*}.github.io"
           npm ci
           npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site/dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      # ── 게이트 2: 빌드 산출물 truth-canary 스캔 ──
+      - name: "Gate 2 - dist truth-canary scan"
+        run: node engine/verify-world.mjs --scan site/dist
+
+      - name: Push dist to site repo (gh-pages)
+        env:
+          TOKEN: ${{ secrets.SITE_DEPLOY_TOKEN }}
+          SITE_REPO: ${{ vars.SITE_REPO }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::secrets.SITE_DEPLOY_TOKEN 미설정"
+            exit 1
+          fi
+          cd site/dist
+          touch .nojekyll
+          printf '%s\n' "# 미르한 사이트" "" "이 저장소는 미르한 사이트의 빌드 산출물입니다. 원본 세계 저장소는 비공개입니다." > README.md
+          git init -b gh-pages
+          git config user.name "mirhan-engine"
+          git config user.email "engine@mirhan.invalid"
+          git add -A
+          git commit -m "deploy $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force "https://x-access-token:${TOKEN}@github.com/${SITE_REPO}.git" gh-pages

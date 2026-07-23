@@ -4,7 +4,11 @@ import { loadCharacters, loadDistricts, appearancesOf } from '../lib/data.js';
 
 const { districts } = loadDistricts();
 const districtName = (id) => districts.find((d) => d.id === id)?.name ?? id;
-const people = loadCharacters().map((c) => ({ ...c, appearances: appearancesOf(c.name) }));
+// 노출 정책 (WO-008): 이름이 chronicle/records 텍스트에 등장한 인물만 카드가 생긴다.
+// 기록에 이름이 오르는 순간 자동으로 도감에 나타난다.
+const people = loadCharacters()
+  .map((c) => ({ ...c, appearances: appearancesOf(c.name) }))
+  .filter((c) => c.appearances.length > 0);
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : import.meta.env.BASE_URL + '/';

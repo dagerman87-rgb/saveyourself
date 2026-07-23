@@ -1,0 +1,36 @@
+# 사이클 자동 실행 (WO-008): 매일 KST 05:00 (UTC 20:00) 1사이클.
+# 실패(API 오류 포함) 시 커밋 없이 종료 — 다음 날 크론이 이어서 실행 (사이클 번호는 실행 순번).
+name: Daily cycle
+
+on:
+  schedule:
+    - cron: "0 20 * * *" # KST 05:00
+  workflow_dispatch:
+
+concurrency:
+  group: cycle
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run-cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install engine deps
+        working-directory: engine
+        run: npm ci
+      - name: Run cycle
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node engine/run-cycle.mjs
+
+  deploy:
+    needs: run-cycle
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit

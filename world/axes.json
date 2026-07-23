@@ -30,5 +30,13 @@
     "note": "세 유가족 방문(three-doors, 사이클 6)으로 공적 축 해소. 잔불: 듣기를 거부한 큰아들.",
     "status": "resolved",
     "over_threshold_since": null
+  },
+  {
+    "id": "yeron-kalla-fee-dispute",
+    "name": "자릿세 대치 — 예론×칼라",
+    "parties": ["yeron-the-fisher", "kalla-the-market-warden"],
+    "note": "자릿세 인상 고지(사이클 1)에서 유예안·우회 서명·장부 물음으로 이어진 축. 사이클 5의 궤 열람(the-chest-is-opened)으로 분출 겸 해소. 해소 사이클: 5. (WO-008 소급 등재)",
+    "status": "resolved",
+    "over_threshold_since": null
   }
 ]

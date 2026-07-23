@@ -3,3 +3,6 @@
 
 # 세션 로컬 설정
 .claude/launch.json
+
+# 의존성
+engine/node_modules/
