@@ -29,7 +29,7 @@ if %errorlevel%==0 (
   echo   No admin rights - falling back to Startup folder
   > "%STARTUP%\mirhan-viewer.cmd" (
     echo @echo off
-    echo start "" /min "%REPO%\engine\start-viewer.cmd"
+    echo start "" /min "%REPO%\engine\start-viewer.cmd" --host lan
   )
   echo   Startup folder: mirhan-viewer.cmd created
 )

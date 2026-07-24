@@ -15,3 +15,6 @@ engine/runner.err.log
 engine/runner-state.json
 engine/viewer.out.log
 engine/viewer.err.log
+
+# 뷰어 접근 토큰 (로컬 비밀 — 커밋 금지)
+engine/.viewer-token

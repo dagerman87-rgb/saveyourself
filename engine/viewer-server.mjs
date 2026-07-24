@@ -1,17 +1,46 @@
 #!/usr/bin/env node
-// 어항 뷰어 서버 (WO-011): 신의 창. localhost 전용 — truth·텐션·비밀 전부 서빙한다.
+// 어항 뷰어 서버 (WO-011): 신의 창 — truth·텐션·비밀 전부 서빙한다.
 // 공개 사이트 파이프라인과 완전 별개. 이 서버의 출력을 배포·공개 경로에 연결하지 말 것.
-// 사용: node engine/viewer-server.mjs [--port 4400]
+// 기본은 localhost 전용. --host lan|0.0.0.0 으로 외부에 열 때는 토큰이 강제된다.
+// 사용: node engine/viewer-server.mjs [--port 4400] [--host lan]
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
+import os from 'node:os';
+import crypto from 'node:crypto';
 import { ROOT } from './verify-world.mjs';
 
-const argPort = process.argv.indexOf('--port');
-const PORT = argPort > -1 ? Number(process.argv[argPort + 1]) : Number(process.env.VIEWER_PORT ?? 4400);
+const arg = (name) => { const i = process.argv.indexOf(name); return i > -1 ? process.argv[i + 1] : null; };
+const PORT = Number(arg('--port') ?? process.env.VIEWER_PORT ?? 4400);
+const HOST_ARG = arg('--host') ?? process.env.VIEWER_HOST ?? 'localhost';
+const BIND = ['lan', 'all', '0.0.0.0'].includes(HOST_ARG) ? '0.0.0.0' : '127.0.0.1';
+const EXPOSED = BIND === '0.0.0.0';
 const VIEWER_DIR = path.join(ROOT, 'viewer');
 const RUNNER_STATE = path.join(ROOT, 'engine', 'runner-state.json');
 const RUNNER_LOCK = path.join(ROOT, 'engine', '.runner.lock');
+const TOKEN_FILE = path.join(ROOT, 'engine', '.viewer-token');
+
+// ---------- 접근 토큰 (외부 노출 시 강제) ----------
+function loadToken() {
+  try { const t = fs.readFileSync(TOKEN_FILE, 'utf8').trim(); if (t) return t; } catch { /* 없으면 생성 */ }
+  const t = crypto.randomBytes(18).toString('base64url');
+  fs.writeFileSync(TOKEN_FILE, t + '\n', 'utf8');
+  return t;
+}
+const TOKEN = loadToken();
+const isLocal = (req) => {
+  const a = req.socket.remoteAddress ?? '';
+  return a === '127.0.0.1' || a === '::1' || a === '::ffff:127.0.0.1';
+};
+function authorized(req, url) {
+  if (!EXPOSED || isLocal(req)) return true;            // 로컬은 토큰 불요
+  if (url.searchParams.get('t') === TOKEN) return true;  // ?t=토큰
+  return (req.headers.cookie ?? '').split(';').some((c) => c.trim() === `mirhan_t=${TOKEN}`);
+}
+function lanAddresses() {
+  return Object.values(os.networkInterfaces()).flat()
+    .filter((i) => i && i.family === 'IPv4' && !i.internal).map((i) => i.address);
+}
 
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const readJson = (rel) => JSON.parse(read(rel));
@@ -102,6 +131,14 @@ function json(res, code, body) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   try {
+    if (!authorized(req, url)) {
+      log(`거부: ${req.socket.remoteAddress} → ${url.pathname} (토큰 없음)`);
+      res.writeHead(401, { 'Content-Type': 'text/html; charset=utf-8' });
+      return res.end('<h1>미르한 — 신의 창</h1><p>이 창은 운영자 전용이다. 접근 링크(토큰 포함)로 들어와야 한다.</p>');
+    }
+    // 토큰이 URL로 들어오면 쿠키로 승격 (이후 요청은 토큰 없이)
+    if (EXPOSED && url.searchParams.get('t') === TOKEN)
+      res.setHeader('Set-Cookie', `mirhan_t=${TOKEN}; Path=/; Max-Age=31536000; SameSite=Lax`);
     if (url.pathname === '/api/snapshot') return json(res, 200, snapshot());
     if (url.pathname === '/api/log') return json(res, 200, readLogEntries());
     if (url.pathname === '/api/stream') {
@@ -140,4 +177,10 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, '127.0.0.1', () => log(`어항 뷰어: http://localhost:${PORT} (신의 창 — localhost 전용)`));
+server.listen(PORT, BIND, () => {
+  log(`어항 뷰어: http://localhost:${PORT} (신의 창 — truth 전면 공개)`);
+  if (EXPOSED) {
+    for (const ip of lanAddresses()) log(`  같은 망에서: http://${ip}:${PORT}/?t=${TOKEN}`);
+    log('  ↑ 토큰이 붙은 링크로만 열린다. 링크를 아는 사람은 세계의 모든 진실을 보고 신탁까지 내릴 수 있다.');
+  } else log('  localhost 전용 — 외부 접속은 --host lan 으로 기동');
+});
