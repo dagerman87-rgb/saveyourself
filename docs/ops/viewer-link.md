@@ -3,9 +3,9 @@
 집 밖(회사 등)에서 어항을 보는 주소다. Cloudflare Quick Tunnel은 터널을 재시작할 때마다
 주소가 바뀌므로, 이 파일이 링크의 정본이다. 갱신은 `engine\publish-tunnel.cmd`가 한다.
 
-    https://ala-clearly-dawn-edinburgh.trycloudflare.com/?t=W-PsDvT9M6zMWbsVPl7KUvRy
+    https://changed-station-remember-parameter.trycloudflare.com/?t=W-PsDvT9M6zMWbsVPl7KUvRy
 
-갱신 시각: 2026-07-24 14:45 (KST)
+갱신 시각: 2026-07-24 19:11 (KST)
 
 ## 쓰는 법
 
