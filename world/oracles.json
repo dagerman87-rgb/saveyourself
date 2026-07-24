@@ -5,5 +5,13 @@
     "decree": "사흘 밤 큰 비가 내린다. 갯벌의 소금밭이 잠긴다.",
     "proclaimed": true,
     "source": "operator"
+  },
+  {
+    "id": "oracle-002",
+    "cycle": null,
+    "decree": "도시에 전염병이 돈다는 소문이 든다. 마을 사람들 중 감염자는 없지만 두려움이 생기게 된다.",
+    "proclaimed": true,
+    "source": "operator",
+    "ts": "2026-07-24T13:21:38.911Z"
   }
 ]
