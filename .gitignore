@@ -18,3 +18,6 @@ engine/viewer.err.log
 
 # 뷰어 접근 토큰 (로컬 비밀 — 커밋 금지)
 engine/.viewer-token
+
+# 터널 로그 (로컬 런타임)
+engine/tunnel.log

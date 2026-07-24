@@ -28,12 +28,18 @@ function loadToken() {
   return t;
 }
 const TOKEN = loadToken();
+// 프록시·터널 경유 요청은 소켓 주소가 127.0.0.1로 보인다 — 로컬로 오인하면 안 된다.
+const viaProxy = (req) => Boolean(
+  req.headers['cf-connecting-ip'] || req.headers['cf-ray'] ||
+  req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.headers['forwarded']
+);
 const isLocal = (req) => {
+  if (viaProxy(req)) return false;
   const a = req.socket.remoteAddress ?? '';
   return a === '127.0.0.1' || a === '::1' || a === '::ffff:127.0.0.1';
 };
 function authorized(req, url) {
-  if (!EXPOSED || isLocal(req)) return true;            // 로컬은 토큰 불요
+  if (isLocal(req)) return true;                         // 진짜 로컬만 토큰 불요
   if (url.searchParams.get('t') === TOKEN) return true;  // ?t=토큰
   return (req.headers.cookie ?? '').split(';').some((c) => c.trim() === `mirhan_t=${TOKEN}`);
 }
@@ -137,7 +143,7 @@ const server = http.createServer((req, res) => {
       return res.end('<h1>미르한 — 신의 창</h1><p>이 창은 운영자 전용이다. 접근 링크(토큰 포함)로 들어와야 한다.</p>');
     }
     // 토큰이 URL로 들어오면 쿠키로 승격 (이후 요청은 토큰 없이)
-    if (EXPOSED && url.searchParams.get('t') === TOKEN)
+    if (url.searchParams.get('t') === TOKEN)
       res.setHeader('Set-Cookie', `mirhan_t=${TOKEN}; Path=/; Max-Age=31536000; SameSite=Lax`);
     if (url.pathname === '/api/snapshot') return json(res, 200, snapshot());
     if (url.pathname === '/api/log') return json(res, 200, readLogEntries());
